@@ -4,34 +4,34 @@ import './style.css';
 const fallbackRecipes = [
   {
     id: 1,
-    title: "10 Dakika Makarnası",
-    icon: "🍝",
-    desc: "Ana Malzemeler: Yarım paket makarna, tereyağı, tuz.",
-    calories: "🔥 350 kcal",
+    title: "Tavada Şipşak Pizza",
+    icon: "🍕",
+    desc: "Ana Malzemeler: Lavaş, Kaşar Peyniri, Sucuk, Salça.",
+    calories: "🔥 450 kcal",
     time: "⏳ 10 Dk",
-    cost: "🤑 Çok Ekonomik (20-30 ₺)",
+    cost: "💰 Ortalama Maliyet (40-60 ₺)",
     steps: [
-      "Önce genişçe bir tencerenin yarısına kadar su doldur ve ocağın altını sonuna kadar aç.",
-      "Su fokur fokur kaynamaya başlayınca içine 1 tatlı kaşığı tuz at ve makarnanın yarısını içine dök.",
-      "Paketin üstünde yazan süre kadar (genelde 10 dakika) bekle. Arada bir karıştır ki yapışmasın.",
-      "Makarnayı süzgece dök. Suyu süzülsün.",
-      "Aynı tencereye 1 yemek kaşığı tereyağı veya biraz sıvı yağ koy. Üzerine makarnayı ekle, 1 dakika karıştır. Afiyet olsun!"
+      "Geniş bir tavaya 1 adet lavaş ekmeğini koy (altını henüz yakma).",
+      "1 yemek kaşığı salçayı biraz su ve kekik ile karıştırıp lavaşın üzerine sür.",
+      "Üzerine bolca rendelenmiş kaşar peyniri ve ince dilimlenmiş sucukları diz.",
+      "Tavanın altını en kısık ateşte aç ve kapağını kapat.",
+      "Peynirler tamamen eriyip lavaşın altı çıtırlaşana kadar (yaklaşık 5-7 dakika) bekle. Afiyet olsun!"
     ]
   },
   {
     id: 2,
-    title: "Öğrenci Tavuğu",
-    icon: "🍗",
-    desc: "Ana Malzemeler: Kuşbaşı tavuk, sıvı yağ, tuz, kekik.",
-    calories: "🔥 420 kcal",
-    time: "⏳ 15 Dk",
-    cost: "💰 Ortalama (50-70 ₺)",
+    title: "5 Dakikada Fincan Kek",
+    icon: "🧁",
+    desc: "Ana Malzemeler: Un, Şeker, Kakao, Süt, Sıvı Yağ.",
+    calories: "🔥 320 kcal",
+    time: "⏳ 5 Dk",
+    cost: "🤑 Çok Ekonomik (15-20 ₺)",
     steps: [
-      "Marketten alınmış kuşbaşı tavukları derin bir kaba koy. Üzerine biraz sıvı yağ ve tuz ekle.",
-      "Geniş bir tavayı ocağa koy, altını orta derece aç. Tava iyice ısınana kadar bekle.",
-      "Tavukları cızırdayan tavaya at. İlk 2 dakika hiç karıştırma.",
-      "Tavukların rengi dönüp tamamen beyaz olana kadar ara ara karıştırarak pişir.",
-      "Tavukların içi beyaz ve yumuşaksa pişmiştir. Afiyet olsun!"
+      "Büyük bir kupa fincanın içine 3 yemek kaşığı un, 2 yemek kaşığı şeker ve 1 yemek kaşığı kakao koyup karıştır.",
+      "Üzerine 3 yemek kaşığı süt ve 2 yemek kaşığı sıvı yağ ekle. Pürüzsüz olana kadar çatal ile iyice çırp.",
+      "İsteğe bağlı olarak içine bir parça çikolata atabilirsin.",
+      "Mikrodalga fırına koy ve en yüksek ayarda tam 1.5 - 2 dakika pişir.",
+      "Biraz soğumasını bekle ve kaşıklayarak ye. Afiyet olsun!"
     ]
   }
 ];
