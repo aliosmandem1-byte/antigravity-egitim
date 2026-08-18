@@ -33,7 +33,7 @@ DİKKAT: Çıktı sadece ve sadece aşağıdaki formatta saf JSON olmalı, baş�
 {
   "title": "Tarif Adı",
   "icon": "🍔",
-  "desc": "Kısa ve eğlenceli bir açıklama.",
+  "desc": "Ana Malzemeler: Tavuk, Tuz, Domates...",
   "calories": "🔥 350 kcal",
   "time": "⏳ 15 Dk",
   "cost": "🤑 Çok Ekonomik (30-50 ₺)",
