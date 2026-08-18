@@ -33,7 +33,9 @@ const fallbackRecipes = [
 // --- DOM Elementleri ---
 const homeView = document.getElementById('home-view');
 const recipeView = document.getElementById('recipe-view');
-const recipeCardsContainer = document.querySelector('.recipe-cards');
+const recipeCardsContainer = document.getElementById('quick-recipe-cards');
+const savedRecipesSection = document.getElementById('saved-recipes-section');
+const savedRecipeCards = document.getElementById('saved-recipe-cards');
 const aiGenerateBtn = document.getElementById('ai-generate-btn');
 const ingredientInput = document.getElementById('ingredient-input');
 
@@ -42,37 +44,91 @@ let currentRecipe = null;
 let currentStepIndex = 0;
 let recognition = null; // SpeechRecognition objesi
 
+// --- LocalStorage Fonksiyonları ---
+function getSavedRecipes() {
+  const saved = localStorage.getItem('aiSef_savedRecipes');
+  return saved ? JSON.parse(saved) : [];
+}
+
+function saveRecipe(recipe) {
+  const savedRecipes = getSavedRecipes();
+  // Zaten kayıtlı mı kontrol et
+  const isSaved = savedRecipes.some(r => r.title === recipe.title);
+  if (!isSaved) {
+    // ID'yi rastgele üret (yapay zeka tarifleri için)
+    if (!recipe.id) recipe.id = Date.now();
+    savedRecipes.push(recipe);
+    localStorage.setItem('aiSef_savedRecipes', JSON.stringify(savedRecipes));
+  }
+}
+
+function removeSavedRecipe(title) {
+  let savedRecipes = getSavedRecipes();
+  savedRecipes = savedRecipes.filter(r => r.title !== title);
+  localStorage.setItem('aiSef_savedRecipes', JSON.stringify(savedRecipes));
+}
+
+function isRecipeSaved(title) {
+  const savedRecipes = getSavedRecipes();
+  return savedRecipes.some(r => r.title === title);
+}
+
 // --- Başlangıç Yüklemesi ---
 function init() {
   renderRecipeList();
+  renderSavedRecipes();
   setupEventListeners();
   initSpeechRecognition();
 }
 
+function createRecipeCard(recipe) {
+  const card = document.createElement('div');
+  card.className = 'recipe-card';
+  card.innerHTML = `
+    <div class="icon">${recipe.icon || '🍽️'}</div>
+    <div class="info">
+      <h4>${recipe.title}</h4>
+      <p>${recipe.desc || 'Yapay Zeka Tarifi'}</p>
+    </div>
+  `;
+  card.addEventListener('click', () => openRecipe(recipe));
+  return card;
+}
+
 function renderRecipeList() {
-  recipeCardsContainer.innerHTML = '';
-  fallbackRecipes.forEach(recipe => {
-    const card = document.createElement('div');
-    card.className = 'recipe-card';
-    card.innerHTML = `
-      <div class="icon">${recipe.icon}</div>
-      <div class="info">
-        <h4>${recipe.title}</h4>
-        <p>${recipe.desc}</p>
-      </div>
-    `;
-    card.addEventListener('click', () => openRecipe(recipe));
-    recipeCardsContainer.appendChild(card);
-  });
+  if (recipeCardsContainer) {
+    recipeCardsContainer.innerHTML = '';
+    fallbackRecipes.forEach(recipe => {
+      recipeCardsContainer.appendChild(createRecipeCard(recipe));
+    });
+  }
+}
+
+function renderSavedRecipes() {
+  if (!savedRecipesSection || !savedRecipeCards) return;
+  const savedRecipes = getSavedRecipes();
+  
+  if (savedRecipes.length > 0) {
+    savedRecipesSection.classList.remove('hidden');
+    savedRecipeCards.innerHTML = '';
+    // En son kaydedilen en üstte görünsün diye tersine çeviriyoruz
+    [...savedRecipes].reverse().forEach(recipe => {
+      savedRecipeCards.appendChild(createRecipeCard(recipe));
+    });
+  } else {
+    savedRecipesSection.classList.add('hidden');
+  }
 }
 
 function setupEventListeners() {
-  aiGenerateBtn.addEventListener('click', handleAIGeneration);
-  ingredientInput.addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-      handleAIGeneration();
-    }
-  });
+  if (aiGenerateBtn) aiGenerateBtn.addEventListener('click', handleAIGeneration);
+  if (ingredientInput) {
+    ingredientInput.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        handleAIGeneration();
+      }
+    });
+  }
 }
 
 // --- Gerçek AI API Çağrısı (Kendi Backend'imize) ---
@@ -195,6 +251,9 @@ function closeRecipe() {
   homeView.classList.remove('hidden');
   recipeView.classList.add('hidden');
   currentRecipe = null;
+  
+  // Çıkarken ana sayfadaki listeleri güncelle (yeni kaydedilenler için)
+  renderSavedRecipes();
 
   // Mikrofonu kapat
   if (recognition) {
@@ -202,17 +261,41 @@ function closeRecipe() {
   }
 }
 
+function toggleSaveCurrentRecipe() {
+  if (!currentRecipe) return;
+  const isSaved = isRecipeSaved(currentRecipe.title);
+  
+  if (isSaved) {
+    removeSavedRecipe(currentRecipe.title);
+  } else {
+    saveRecipe(currentRecipe);
+  }
+  
+  // Sadece butonu güncelle
+  const saveBtn = document.getElementById('save-btn');
+  if (saveBtn) {
+    const newlySaved = isRecipeSaved(currentRecipe.title);
+    saveBtn.innerHTML = newlySaved ? '🔖' : '📑';
+    saveBtn.title = newlySaved ? 'Kaydedilenlerden Çıkar' : 'Tarifi Kaydet';
+    saveBtn.classList.toggle('active', newlySaved);
+  }
+}
+
 function renderRecipeSteps() {
   const totalSteps = currentRecipe.steps.length;
   const isLastStep = currentStepIndex === totalSteps - 1;
   const isFirstStep = currentStepIndex === 0;
+  const isSaved = isRecipeSaved(currentRecipe.title);
 
   const micBadgeHTML = recognition ? '<div class="mic-badge listening" title="Sesli Komut Açık">🎙️ Dinliyor</div>' : '';
 
   recipeView.innerHTML = `
     <div class="recipe-header">
       <button class="back-btn" id="back-btn">←</button>
-      <h2>${currentRecipe.icon} ${currentRecipe.title}</h2>
+      <h2>${currentRecipe.icon || '🍽️'} ${currentRecipe.title}</h2>
+      <button class="save-btn ${isSaved ? 'active' : ''}" id="save-btn" title="${isSaved ? 'Kaydedilenlerden Çıkar' : 'Tarifi Kaydet'}">
+        ${isSaved ? '🔖' : '📑'}
+      </button>
     </div>
     
     <div class="step-container">
@@ -231,6 +314,7 @@ function renderRecipeSteps() {
 
   // Listenerları ekle
   document.getElementById('back-btn').addEventListener('click', closeRecipe);
+  document.getElementById('save-btn').addEventListener('click', toggleSaveCurrentRecipe);
   document.getElementById('prev-btn').addEventListener('click', () => changeStep(-1));
   document.getElementById('next-btn').addEventListener('click', () => {
     if (isLastStep) {
