@@ -51,6 +51,12 @@ DİKKAT: Çıktı sadece ve sadece aşağıdaki formatta saf JSON olmalı, baş�
 
     if (!response.ok) {
       const errorData = await response.json();
+      
+      // Eğer limit (429 - Quota Exceeded) hatası alındıysa
+      if (response.status === 429) {
+        return res.status(429).json({ error: "Sistem şu an çok yoğun (Google API limiti). Lütfen 1 dakika bekleyip tekrar deneyin! ⏳" });
+      }
+      
       return res.status(response.status).json(errorData);
     }
 
