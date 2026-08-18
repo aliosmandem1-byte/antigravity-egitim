@@ -66,7 +66,7 @@ DİKKAT: Çıktı sadece ve sadece aşağıdaki formatta saf JSON olmalı, baş�
 app.use(express.static(path.join(__dirname, 'dist')));
 
 // Diğer tüm rotaları index.html'e yönlendir (SPA)
-app.get('*', (req, res) => {
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
