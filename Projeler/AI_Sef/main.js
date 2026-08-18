@@ -7,6 +7,9 @@ const fallbackRecipes = [
     title: "10 Dakika Makarnası",
     icon: "🍝",
     desc: "Su kaynatmayı biliyorsan, bunu da yaparsın.",
+    calories: "🔥 350 kcal",
+    time: "⏳ 10 Dk",
+    cost: "🤑 Çok Ekonomik (20-30 ₺)",
     steps: [
       "Önce genişçe bir tencerenin yarısına kadar su doldur ve ocağın altını sonuna kadar aç.",
       "Su fokur fokur kaynamaya başlayınca içine 1 tatlı kaşığı tuz at ve makarnanın yarısını içine dök.",
@@ -20,6 +23,9 @@ const fallbackRecipes = [
     title: "Öğrenci Tavuğu",
     icon: "🍗",
     desc: "Tavuk nasıl kurutulmaz? Çok basit bir taktik.",
+    calories: "🔥 420 kcal",
+    time: "⏳ 15 Dk",
+    cost: "💰 Ortalama (50-70 ₺)",
     steps: [
       "Marketten alınmış kuşbaşı tavukları derin bir kaba koy. Üzerine biraz sıvı yağ ve tuz ekle.",
       "Geniş bir tavayı ocağa koy, altını orta derece aç. Tava iyice ısınana kadar bekle.",
@@ -317,6 +323,14 @@ function renderRecipeSteps() {
 
   const micBadgeHTML = recognition ? '<div class="mic-badge listening" title="Sesli Komut Açık">🎙️ Dinliyor</div>' : '';
 
+  const badgesHTML = `
+    <div class="recipe-badges">
+      ${currentRecipe.calories ? `<span class="badge badge-calories">${currentRecipe.calories}</span>` : ''}
+      ${currentRecipe.time ? `<span class="badge badge-time">${currentRecipe.time}</span>` : ''}
+      ${currentRecipe.cost ? `<span class="badge badge-cost">${currentRecipe.cost}</span>` : ''}
+    </div>
+  `;
+
   recipeView.innerHTML = `
     <div class="recipe-header">
       <button class="back-btn" id="back-btn">←</button>
@@ -325,6 +339,8 @@ function renderRecipeSteps() {
         ${isSaved ? '🔖' : '📑'}
       </button>
     </div>
+    
+    ${currentRecipe.calories || currentRecipe.time || currentRecipe.cost ? badgesHTML : ''}
     
     <div class="step-container">
       <div class="step-badge">Adım ${currentStepIndex + 1} / ${totalSteps}</div>

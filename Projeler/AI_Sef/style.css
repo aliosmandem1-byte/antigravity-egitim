@@ -303,6 +303,38 @@ input[type="text"]:focus, input[type="password"]:focus {
   color: white;
 }
 
+/* Akıllı Rozetler (Badges) */
+.recipe-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: -10px;
+  margin-bottom: 24px;
+  justify-content: center;
+}
+
+.badge {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--glass-border);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.badge:hover {
+  transform: translateY(-2px);
+}
+
+.badge-calories { border-color: #f59e0b; color: #fcd34d; background: rgba(245, 158, 11, 0.1); }
+.badge-time { border-color: #3b82f6; color: #93c5fd; background: rgba(59, 130, 246, 0.1); }
+.badge-cost { border-color: #10b981; color: #6ee7b7; background: rgba(16, 185, 129, 0.1); }
+
 .saved-recipes {
   margin-bottom: 40px;
 }
