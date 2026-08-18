@@ -73,7 +73,13 @@ DİKKAT: Çıktı sadece ve sadece aşağıdaki formatta saf JSON olmalı, baş�
 });
 
 // Production modunda Vite build klasörünü sun (Railway Deploy)
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, 'dist'), {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    }
+  }
+}));
 
 // Diğer tüm rotaları index.html'e yönlendir (SPA)
 app.use((req, res) => {
