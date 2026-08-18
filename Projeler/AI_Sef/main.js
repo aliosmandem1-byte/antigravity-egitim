@@ -1,6 +1,7 @@
 import './style.css';
 
 // --- Sahte Veri (Mock Data) ---
+// Not: Railway tetiklemesi için boş commit
 const fallbackRecipes = [
   {
     id: 1,
