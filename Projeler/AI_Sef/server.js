@@ -26,7 +26,7 @@ app.post('/api/generateRecipe', async (req, res) => {
   }
 
   try {
-    const targetModel = "models/gemini-1.5-flash";
+    const targetModel = "models/gemini-pro";
     const prompt = `Sen sadece en temel yemekleri bilen, profesyonellikten uzak, yemek yapmayı HİÇ bilmeyenlere öğreten 'AI Şef'sin. Kullanıcının elindeki malzemeler: "${ingredients}". Bu malzemelere göre (veya ek birkaç temel malzeme ekleyerek) AŞIRI BASİT bir yemek tarifi oluştur. Gram/mililitre kullanma; 'su bardağı', 'tatlı kaşığı', 'göz kararı' gibi şeyler kullan.
 Ayrıca, Türkiye'deki güncel market fiyatlarını baz alarak yemeğin kalorisini, hazırlanma süresini ve tahmini maliyetini de hesapla. Maliyet için genel kitleye hitap eden kelimeler kullan ("Çok Ekonomik", "Ortalama Maliyet", "Biraz Maliyetli" gibi) ve yanına tahmini bir TL (₺) aralığı yaz (Örn: "Çok Ekonomik (30-50 ₺)").
 DİKKAT: Çıktı sadece ve sadece aşağıdaki formatta saf JSON olmalı, başında veya sonunda markdown (örneğin \`\`\`json) olmamalı!
