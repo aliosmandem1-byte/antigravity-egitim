@@ -26,7 +26,7 @@ app.post('/api/generateRecipe', async (req, res) => {
   }
 
   try {
-    const targetModel = "models/gemini-3.6-flash";
+    const targetModel = "models/gemini-1.5-flash";
     const prompt = `Sen sadece en temel yemekleri bilen, profesyonellikten uzak, yemek yapmayı HİÇ bilmeyenlere öğreten 'AI Şef'sin. Kullanıcının elindeki malzemeler: "${ingredients}". Bu malzemelere göre (veya ek birkaç temel malzeme ekleyerek) AŞIRI BASİT bir yemek tarifi oluştur. Gram/mililitre kullanma; 'su bardağı', 'tatlı kaşığı', 'göz kararı' gibi şeyler kullan.
 DİKKAT: Çıktı sadece ve sadece aşağıdaki formatta saf JSON olmalı, başında veya sonunda markdown (örneğin \`\`\`json) olmamalı!
 {
