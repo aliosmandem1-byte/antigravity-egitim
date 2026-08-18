@@ -43,6 +43,7 @@ const ingredientInput = document.getElementById('ingredient-input');
 let currentRecipe = null;
 let currentStepIndex = 0;
 let recognition = null; // SpeechRecognition objesi
+let isReadAloudActive = false; // Sesli asistan (Text-to-Speech) durumu
 
 // --- LocalStorage Fonksiyonları ---
 function getSavedRecipes() {
@@ -52,10 +53,8 @@ function getSavedRecipes() {
 
 function saveRecipe(recipe) {
   const savedRecipes = getSavedRecipes();
-  // Zaten kayıtlı mı kontrol et
   const isSaved = savedRecipes.some(r => r.title === recipe.title);
   if (!isSaved) {
-    // ID'yi rastgele üret (yapay zeka tarifleri için)
     if (!recipe.id) recipe.id = Date.now();
     savedRecipes.push(recipe);
     localStorage.setItem('aiSef_savedRecipes', JSON.stringify(savedRecipes));
@@ -111,7 +110,6 @@ function renderSavedRecipes() {
   if (savedRecipes.length > 0) {
     savedRecipesSection.classList.remove('hidden');
     savedRecipeCards.innerHTML = '';
-    // En son kaydedilen en üstte görünsün diye tersine çeviriyoruz
     [...savedRecipes].reverse().forEach(recipe => {
       savedRecipeCards.appendChild(createRecipeCard(recipe));
     });
@@ -152,7 +150,6 @@ async function generateRecipeFromGemini(ingredients) {
     let textContent = data.candidates[0].content.parts[0].text.trim();
     console.log("AI'dan gelen ham cevap:", textContent);
     
-    // Regex ile { ... } arasını alarak sadece JSON'ı ayıkla
     const jsonMatch = textContent.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       throw new Error("Yapay zeka geçerli bir format döndüremedi. Lütfen tekrar deneyin.");
@@ -178,7 +175,6 @@ async function handleAIGeneration() {
   aiGenerateBtn.disabled = true;
 
   try {
-    // Gerçek AI
     const recipe = await generateRecipeFromGemini(ingredients);
     openRecipe(recipe);
   } catch (err) {
@@ -221,23 +217,54 @@ function initSpeechRecognition() {
     recognition.onerror = function(event) {
       console.error("Speech Recognition Hata:", event.error);
     };
-
   } else {
     console.warn("Tarayıcınız SpeechRecognition API'sini desteklemiyor.");
   }
+}
+
+// --- Sesli Asistan (Text-to-Speech) ---
+function toggleReadAloud() {
+  isReadAloudActive = !isReadAloudActive;
+  
+  const readBtn = document.getElementById('read-aloud-btn');
+  if (readBtn) {
+    readBtn.innerHTML = isReadAloudActive ? '🔇 Asistanı Sustur' : '🔊 Bana Oku';
+    readBtn.classList.toggle('active', isReadAloudActive);
+  }
+
+  if (isReadAloudActive) {
+    readCurrentStep();
+  } else {
+    window.speechSynthesis.cancel();
+  }
+}
+
+function readCurrentStep() {
+  if (!isReadAloudActive || !currentRecipe) return;
+  
+  // Önceki konuşmayı durdur
+  window.speechSynthesis.cancel();
+
+  const textToRead = currentRecipe.steps[currentStepIndex];
+  const utterance = new SpeechSynthesisUtterance(textToRead);
+  utterance.lang = 'tr-TR';
+  utterance.rate = 1.0; // Okuma hızı (normal)
+  utterance.pitch = 1.1; // Ses tonu
+  
+  window.speechSynthesis.speak(utterance);
 }
 
 // --- Tarif Ekranı Mantığı ---
 function openRecipe(recipe) {
   currentRecipe = recipe;
   currentStepIndex = 0;
+  isReadAloudActive = false; // Her yeni tarifte kapalı gelsin
   
   homeView.classList.add('hidden');
   recipeView.classList.remove('hidden');
   
   renderRecipeSteps();
 
-  // Mikrofonu başlat
   if (recognition) {
     try {
       recognition.start();
@@ -252,13 +279,15 @@ function closeRecipe() {
   recipeView.classList.add('hidden');
   currentRecipe = null;
   
-  // Çıkarken ana sayfadaki listeleri güncelle (yeni kaydedilenler için)
   renderSavedRecipes();
 
-  // Mikrofonu kapat
   if (recognition) {
     recognition.stop();
   }
+  
+  // Sesli asistanı da sustur
+  window.speechSynthesis.cancel();
+  isReadAloudActive = false;
 }
 
 function toggleSaveCurrentRecipe() {
@@ -271,7 +300,6 @@ function toggleSaveCurrentRecipe() {
     saveRecipe(currentRecipe);
   }
   
-  // Sadece butonu güncelle
   const saveBtn = document.getElementById('save-btn');
   if (saveBtn) {
     const newlySaved = isRecipeSaved(currentRecipe.title);
@@ -301,6 +329,11 @@ function renderRecipeSteps() {
     <div class="step-container">
       <div class="step-badge">Adım ${currentStepIndex + 1} / ${totalSteps}</div>
       ${micBadgeHTML}
+      
+      <button class="read-aloud-btn ${isReadAloudActive ? 'active' : ''}" id="read-aloud-btn">
+        ${isReadAloudActive ? '🔇 Asistanı Sustur' : '🔊 Bana Oku'}
+      </button>
+
       <div class="step-content" id="step-content">
         ${currentRecipe.steps[currentStepIndex]}
       </div>
@@ -312,9 +345,9 @@ function renderRecipeSteps() {
     </div>
   `;
 
-  // Listenerları ekle
   document.getElementById('back-btn').addEventListener('click', closeRecipe);
   document.getElementById('save-btn').addEventListener('click', toggleSaveCurrentRecipe);
+  document.getElementById('read-aloud-btn').addEventListener('click', toggleReadAloud);
   document.getElementById('prev-btn').addEventListener('click', () => changeStep(-1));
   document.getElementById('next-btn').addEventListener('click', () => {
     if (isLastStep) {
@@ -336,7 +369,11 @@ function changeStep(direction) {
   }
   
   renderRecipeSteps();
+  
+  // Eğer asistan açıksa yeni adımı okusun
+  if (isReadAloudActive) {
+    readCurrentStep();
+  }
 }
 
-// Uygulamayı Başlat
 init();

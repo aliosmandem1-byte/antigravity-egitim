@@ -373,6 +373,34 @@ input[type="text"]:focus, input[type="password"]:focus {
   100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
 }
 
+.read-aloud-btn {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--secondary-accent);
+  color: var(--text-main);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.read-aloud-btn:hover {
+  background: rgba(139, 92, 246, 0.2);
+}
+
+.read-aloud-btn.active {
+  background: var(--secondary-accent);
+  color: white;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+}
+
 .step-content {
   font-size: 1.2rem;
   font-weight: 500;
