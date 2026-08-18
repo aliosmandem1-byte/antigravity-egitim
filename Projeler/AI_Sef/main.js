@@ -89,11 +89,26 @@ function init() {
 function createRecipeCard(recipe) {
   const card = document.createElement('div');
   card.className = 'recipe-card';
+  
+  let miniBadges = '';
+  if (recipe.calories || recipe.time) {
+    miniBadges = `
+      <div class="card-mini-badges">
+        ${recipe.calories ? `<span>${recipe.calories.split(' ')[0]} ${recipe.calories.split(' ')[1]}</span>` : ''}
+        ${recipe.time ? `<span>${recipe.time}</span>` : ''}
+      </div>
+    `;
+  }
+
   card.innerHTML = `
     <div class="icon">${recipe.icon || '🍽️'}</div>
     <div class="info">
       <h4>${recipe.title}</h4>
       <p>${recipe.desc || 'Yapay Zeka Tarifi'}</p>
+      ${miniBadges}
+    </div>
+    <div class="card-action">
+      <span class="action-icon">→</span>
     </div>
   `;
   card.addEventListener('click', () => openRecipe(recipe));

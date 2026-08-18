@@ -208,12 +208,32 @@ input[type="text"]:focus, input[type="password"]:focus {
   gap: 16px;
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.recipe-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 16px;
+  padding: 2px;
+  background: linear-gradient(45deg, transparent, rgba(244, 63, 94, 0.5), transparent);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .recipe-card:hover {
-  background: rgba(244, 63, 94, 0.1);
-  border-color: var(--primary-accent);
-  transform: translateX(5px);
+  background: rgba(30, 41, 59, 0.8);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px -5px rgba(244, 63, 94, 0.2);
+}
+
+.recipe-card:hover::before {
+  opacity: 1;
 }
 
 .recipe-card .icon {
@@ -225,6 +245,11 @@ input[type="text"]:focus, input[type="password"]:focus {
   justify-content: center;
   align-items: center;
   border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.recipe-card .info {
+  flex: 1;
 }
 
 .recipe-card .info h4 {
@@ -236,6 +261,44 @@ input[type="text"]:focus, input[type="password"]:focus {
 .recipe-card .info p {
   color: var(--text-muted);
   font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+
+.card-mini-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.card-mini-badges span {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+}
+
+.card-action {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(244, 63, 94, 0.1);
+  color: var(--primary-accent);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
+}
+
+.recipe-card:hover .card-action {
+  opacity: 1;
+  transform: translateX(0);
+  background: var(--primary-accent);
+  color: white;
 }
 
 /* Utilities */
