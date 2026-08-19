@@ -335,6 +335,12 @@ function toggleReadAloud() {
   }
 }
 
+// --- Sistem Seslerini Hazırla ---
+let globalVoices = [];
+window.speechSynthesis.onvoiceschanged = () => {
+  globalVoices = window.speechSynthesis.getVoices();
+};
+
 function readCurrentStep() {
   if (!isReadAloudActive || !currentRecipe) return;
   
@@ -350,44 +356,45 @@ function readCurrentStep() {
   else if (currentLang === 'es') targetLang = 'es-ES';
   utterance.lang = targetLang;
   
-  // Sistemdeki sesleri al
-  const voices = window.speechSynthesis.getVoices();
-  const langVoices = voices.filter(v => v.lang.includes(targetLang.split('-')[0]));
+  // Sistemdeki sesleri al (boşsa çekmeye çalış)
+  if (globalVoices.length === 0) {
+    globalVoices = window.speechSynthesis.getVoices();
+  }
   
-  // Kadın/Erkek sesi bulmak için yaygın isimleri ve kelimeleri arayalım
-  const femaleKeywords = ['ayşe', 'yelda', 'female', 'woman', 'zira', 'samantha', 'victoria', 'hazel', 'google türkçe kadın'];
-  const maleKeywords = ['tolga', 'ozan', 'male', 'man', 'david', 'alex', 'george', 'google türkçe erkek'];
+  const langVoices = globalVoices.filter(v => v.lang.includes(targetLang.split('-')[0]));
+  
+  // Kadın/Erkek sesi bulmak için çok daha geniş isimler
+  // Emel: Edge Online Kadın Sesi, Ayşe/Yelda: Windows/Mac, Gül: Android
+  const femaleKeywords = ['ayşe', 'emel', 'yelda', 'gül', 'female', 'woman', 'zira', 'samantha', 'victoria', 'hazel', 'kadın'];
+  const maleKeywords = ['tolga', 'ahmet', 'ozan', 'male', 'man', 'david', 'alex', 'george', 'erkek'];
   
   let selectedVoice = null;
 
-  // Şef moduna göre ses tonu, hız ve kadın/erkek ayarı
   if (currentPersona === 'angry') {
     utterance.rate = 1.25; 
     utterance.pitch = 0.7; 
     selectedVoice = langVoices.find(v => maleKeywords.some(kw => v.name.toLowerCase().includes(kw)));
   } else if (currentPersona === 'mom') {
     utterance.rate = 0.9;  
-    utterance.pitch = 1.4; 
+    utterance.pitch = 1.7; // Eğer ses hala erkekse, 1.7 kalınlığı çok ince yaparak kadın sesine benzetir
     selectedVoice = langVoices.find(v => femaleKeywords.some(kw => v.name.toLowerCase().includes(kw)));
   } else if (currentPersona === 'student') {
     utterance.rate = 1.15; 
     utterance.pitch = 1.1; 
     selectedVoice = langVoices.find(v => maleKeywords.some(kw => v.name.toLowerCase().includes(kw)));
   } else {
-    // Standart Şef (Erkek tercih edelim)
     utterance.rate = 1.0; 
     utterance.pitch = 1.0; 
     selectedVoice = langVoices.find(v => maleKeywords.some(kw => v.name.toLowerCase().includes(kw)));
   }
   
-  // Eğer özel bir ses bulduysak atayalım, bulamadıysak dilin ilk sesini kullanalım
+  // Bulunan sesi ata
   if (selectedVoice) {
     utterance.voice = selectedVoice;
   } else if (langVoices.length > 0) {
-    // Eğer 'mom' ise ve sistemde sadece 2 ses varsa, muhtemelen 2. ses (veya 1.) kadındır.
-    // (Örn: Windows'ta 0: Tolga, 1: Ayşe olabilir)
+    // Eğer 'mom' ise, ve liste varsa tersinden arayalım (Genelde 2. ses kadındır)
     if (currentPersona === 'mom' && langVoices.length > 1) {
-       utterance.voice = langVoices[1]; // Şansımızı 2. sesten yana kullanalım
+       utterance.voice = langVoices[langVoices.length - 1]; 
     } else {
        utterance.voice = langVoices[0];
     }
