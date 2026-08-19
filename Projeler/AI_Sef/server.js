@@ -3,6 +3,9 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import rateLimit from 'express-rate-limit';
+import { createClient } from '@supabase/supabase-js';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 dotenv.config();
 
@@ -13,7 +16,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+// Supabase İstemcisi
+const supabaseUrl = process.env.SUPABASE_URL || 'https://cakkrzjgpyvwtogurgfe.supabase.co';
+const supabaseKey = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNha2tyempncHl2d3RvZ3VyZ2ZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcxMjgzNDYsImV4cCI6MjEwMjcwNDM0Nn0.MfiPHIs1IABGmwmciYLckF-iYYuUbGEKhw_wcyhDRQg';
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Rate Limiter (Spam Koruması)
+const recipeLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 dakika
+  max: 4, // 1 dakikada en fazla 4 istek
+  message: { error: { message: "Çok hızlı tarif istiyorsun! Şefimiz biraz yoruldu, lütfen 1 dakika dinlenmesine izin ver. ⏳" } }
+});
 
 // API Rotaları
 app.get('/api/models', async (req, res) => {
@@ -37,11 +50,39 @@ app.get('/api/test-direct', async (req, res) => {
     res.status(500).json({ error: e.message, name: e.name, stack: e.stack });
   }
 });
-app.post('/api/generateRecipe', async (req, res) => {
+app.post('/api/generateRecipe', recipeLimiter, async (req, res) => {
   const { ingredients, language = 'tr', persona = 'standart' } = req.body;
   if (!ingredients) {
     return res.status(400).json({ error: 'Malzemeler eksik' });
   }
+
+  const cleanIngredients = ingredients.toLowerCase().trim();
+
+  // 1. Supabase Önbelleğinde (Cache) Ara
+  try {
+    const { data: cachedData, error: cacheError } = await supabase
+      .from('recipes')
+      .select('response')
+      .eq('ingredients', cleanIngredients)
+      .eq('language', language)
+      .eq('persona', persona)
+      .single();
+
+    if (cachedData && cachedData.response) {
+      console.log("⚡ CACHE HIT! Veritabanından getirildi:", cleanIngredients);
+      return res.status(200).json({
+        candidates: [{
+          content: {
+            parts: [{ text: JSON.stringify(cachedData.response) }]
+          }
+        }]
+      });
+    }
+  } catch (err) {
+    console.log("Supabase okuma hatası (Tablo henüz kurulmamış olabilir):", err.message);
+  }
+  
+  console.log("🤖 CACHE MISS! Yapay zekaya soruluyor:", cleanIngredients);
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -131,6 +172,26 @@ DİKKAT: Çıktı sadece ve sadece aşağıdaki formatta saf JSON olmalı, baş�
     }
     
     const recipeData = JSON.parse(jsonMatch[0]);
+
+    // 2. Üretilen yeni tarifi gelecekteki kullanımlar için Supabase'e kaydet
+    try {
+      const { error: insertError } = await supabase
+        .from('recipes')
+        .insert([{
+          ingredients: cleanIngredients,
+          language: language,
+          persona: persona,
+          response: recipeData
+        }]);
+      
+      if (insertError) {
+        console.log("Supabase yazma hatası:", insertError.message);
+      } else {
+        console.log("💾 Veritabanına yeni tarif kaydedildi:", cleanIngredients);
+      }
+    } catch (err) {
+      console.log("Supabase insert try-catch hatası:", err.message);
+    }
 
     // Frontend'in beklediği eski formata uyum sağlamak için SDK verisini simüle et
     res.status(200).json({
