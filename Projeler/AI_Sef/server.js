@@ -75,7 +75,9 @@ app.post('/api/generateRecipe', async (req, res) => {
     const prompt = `${personaPrompt}
 Kullanıcının elindeki malzemeler veya istediği tarif: "${ingredients}". 
 Kullanıcı bir malzeme listesi verdiyse ona göre, doğrudan bir tarif adı verdiyse o tarife göre AŞIRI BASİT bir yemek tarifi oluştur. Eğer kullanıcı birbiriyle uyumsuz veya saçma malzemeler verdiyse bile bunu yenebilir ve mantıklı bir hale getirerek tarifleştir. Gram/mililitre kullanma; 'su bardağı', 'tatlı kaşığı', 'göz kararı' gibi şeyler kullan.
-Ayrıca, yemeğin kalorisini, hazırlanma süresini ve tahmini maliyetini de hesapla. Maliyet için genel kitleye hitap eden kelimeler kullan (Örn: Türkçe için "Çok Ekonomik", İngilizce için "Very Cheap") ve yanına tahmini fiyat aralığını yaz.
+Ayrıca, yemeğin kalorisini, hazırlanma süresini ve tahmini maliyetini de hesapla.
+DİKKAT MALİYET HESABI: Maliyeti hesaplarken malzemelerin sadece tarifte kullanılan kadarının (gram/porsiyon) maliyetini DEĞİL, marketten SATIN ALINMA (bütün/paket/kilo) fiyatını baz al. Örneğin, tarifte 2 yaprak marul kullanılacak olsa bile kullanıcının marketten 1 tam marul alması gerektiğini düşünerek tam marul fiyatını hesaba kat. Fiyatlandırmayı güncel piyasa koşullarına göre mantıklı bir şekilde yap.
+Maliyet sonucunu genel kitleye hitap eden kelimelerle (Örn: Türkçe için "Çok Ekonomik", İngilizce için "Very Cheap") ve yanına tahmini fiyat aralığını yazarak belirt.
 
 ${langInstruction}
 
