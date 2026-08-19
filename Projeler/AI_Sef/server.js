@@ -27,6 +27,16 @@ app.get('/api/models', async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
+app.get('/api/test-direct', async (req, res) => {
+  try {
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const result = await model.generateContent("hello");
+    res.status(200).json({ success: true, text: result.response.text() });
+  } catch(e) {
+    res.status(500).json({ error: e.message, name: e.name, stack: e.stack });
+  }
+});
 app.post('/api/generateRecipe', async (req, res) => {
   const { ingredients, language = 'tr', persona = 'standart' } = req.body;
   if (!ingredients) {
