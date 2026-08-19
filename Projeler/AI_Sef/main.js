@@ -48,7 +48,12 @@ const translations = {
     chefStandart: "👨‍🍳 Standart Şef",
     chefAngry: "🤬 Sinirli Şef (Ramsay)",
     chefMom: "👵 Sevecen Anne",
-    chefStudent: "🎓 Üşengeç Öğrenci"
+    chefStudent: "🎓 Üşengeç Öğrenci",
+    saveBtnText: "Tarifi Kaydet",
+    savedBtnText: "Kaydedildi",
+    generatingText: "Düşünüyor... 🤔",
+    errorText: "Tarif oluşturulamadı. Lütfen tekrar dene.",
+    emptyInputAlert: "Lütfen dolabındaki malzemeleri yaz! (Örn: Domates, yumurta)"
   },
   en: {
     heroTitle: "What should we cook today?",
@@ -59,7 +64,12 @@ const translations = {
     chefStandart: "👨‍🍳 Standard Chef",
     chefAngry: "🤬 Angry Chef (Ramsay)",
     chefMom: "👵 Loving Mom",
-    chefStudent: "🎓 Lazy Student"
+    chefStudent: "🎓 Lazy Student",
+    saveBtnText: "Save Recipe",
+    savedBtnText: "Saved",
+    generatingText: "Thinking... 🤔",
+    errorText: "Failed to generate recipe. Please try again.",
+    emptyInputAlert: "Please write your ingredients! (Ex: Tomato, eggs)"
   },
   de: {
     heroTitle: "Was kochen wir heute?",
@@ -70,7 +80,12 @@ const translations = {
     chefStandart: "👨‍🍳 Standardkoch",
     chefAngry: "🤬 Wütender Koch",
     chefMom: "👵 Liebevolle Mutter",
-    chefStudent: "🎓 Fauler Student"
+    chefStudent: "🎓 Fauler Student",
+    saveBtnText: "Rezept Speichern",
+    savedBtnText: "Gespeichert",
+    generatingText: "Denkt nach... 🤔",
+    errorText: "Rezept konnte nicht erstellt werden. Bitte versuche es erneut.",
+    emptyInputAlert: "Bitte schreibe deine Zutaten! (Bsp: Tomate, Eier)"
   },
   es: {
     heroTitle: "¿Qué cocinamos hoy?",
@@ -81,7 +96,12 @@ const translations = {
     chefStandart: "👨‍🍳 Chef Estándar",
     chefAngry: "🤬 Chef Enojado",
     chefMom: "👵 Mamá Amorosa",
-    chefStudent: "🎓 Estudiante Perezoso"
+    chefStudent: "🎓 Estudiante Perezoso",
+    saveBtnText: "Guardar Receta",
+    savedBtnText: "Guardado",
+    generatingText: "Pensando... 🤔",
+    errorText: "No se pudo generar la receta. Inténtalo de nuevo.",
+    emptyInputAlert: "¡Por favor escribe tus ingredientes! (Ej: Tomate, huevos)"
   }
 };
 
@@ -113,6 +133,46 @@ function updateLanguage() {
       el.textContent = dict[key];
     }
   });
+
+  const inputEl = document.getElementById('ingredient-input');
+  if (inputEl) {
+    if (currentLang === 'en') inputEl.placeholder = "Ex: Chicken, tomato, pasta...";
+    else if (currentLang === 'de') inputEl.placeholder = "Bsp: Hähnchen, Tomate, Nudeln...";
+    else if (currentLang === 'es') inputEl.placeholder = "Ej: Pollo, tomate, pasta...";
+    else inputEl.placeholder = "Örn: Tavuk, domates, makarna...";
+  }
+
+  // Şef ipuçlarının dile göre güncellenmesi
+  const hintMap = {
+    'tr': {
+      'standart': 'Her türlü yemeği tam ölçüsüyle profesyonelce anlatır.',
+      'angry': 'Disiplinli, lafını esirgemeyen ama mükemmel sonuç veren tarifler.',
+      'mom': 'Göz kararı, bol sevgiyle ve ev yapımı sıcaklığında tarifler.',
+      'student': 'En az bulaşıkla, en ucuz malzemeyle hızlı doyuran tarifler.'
+    },
+    'en': {
+      'standart': 'Professional and precise with exact measurements.',
+      'angry': 'Harsh, disciplined, but delivers perfect results.',
+      'mom': 'Cooks by eye, with lots of love and homemade warmth.',
+      'student': 'Fast, cheap, and requires minimum washing up.'
+    },
+    'de': {
+      'standart': 'Professionell und präzise mit exakten Maßen.',
+      'angry': 'Hart, diszipliniert, aber liefert perfekte Ergebnisse.',
+      'mom': 'Kocht nach Gefühl, mit viel Liebe und häuslicher Wärme.',
+      'student': 'Schnell, billig und erfordert minimalen Abwasch.'
+    },
+    'es': {
+      'standart': 'Profesional y preciso con medidas exactas.',
+      'angry': 'Duro, disciplinado, pero ofrece resultados perfectos.',
+      'mom': 'Cocina a ojo, con mucho amor y calor casero.',
+      'student': 'Rápido, barato y requiere poco lavado.'
+    }
+  };
+  const hintEl = document.getElementById('persona-hint');
+  if(hintEl) {
+    hintEl.innerText = hintMap[currentLang][currentPersona] || hintMap['tr'][currentPersona];
+  }
 }
 
 // --- LocalStorage Fonksiyonları ---
@@ -144,10 +204,10 @@ function isRecipeSaved(title) {
 
 // --- Başlangıç Yüklemesi ---
 function init() {
-  renderRecipeList();
   renderSavedRecipes();
   setupEventListeners();
   initSpeechRecognition();
+  updateLanguage();
 }
 
 function createRecipeCard(recipe) {
@@ -177,15 +237,6 @@ function createRecipeCard(recipe) {
   `;
   card.addEventListener('click', () => openRecipe(recipe));
   return card;
-}
-
-function renderRecipeList() {
-  if (recipeCardsContainer) {
-    recipeCardsContainer.innerHTML = '';
-    fallbackRecipes.forEach(recipe => {
-      recipeCardsContainer.appendChild(createRecipeCard(recipe));
-    });
-  }
 }
 
 function renderSavedRecipes() {
@@ -221,14 +272,7 @@ function setupEventListeners() {
   if (personaSelect) {
     personaSelect.addEventListener('change', (e) => {
       currentPersona = e.target.value;
-      const hintMap = {
-        'standart': 'Her türlü yemeği tam ölçüsüyle profesyonelce anlatır.',
-        'angry': 'Disiplinli, lafını esirgemeyen ama mükemmel sonuç veren tarifler.',
-        'mom': 'Göz kararı, bol sevgiyle ve ev yapımı sıcaklığında tarifler.',
-        'student': 'En az bulaşıkla, en ucuz malzemeyle hızlı doyuran tarifler.'
-      };
-      const hintEl = document.getElementById('persona-hint');
-      if(hintEl) hintEl.innerText = hintMap[currentPersona];
+      updateLanguage();
     });
   }
 }
@@ -270,22 +314,29 @@ async function generateRecipeFromGemini(ingredients) {
 async function handleAIGeneration() {
   const ingredients = ingredientInput.value.trim();
   if(!ingredients) {
-    alert("Lütfen dolabındaki malzemeleri yaz! (Örn: Domates, yumurta)");
+    alert(translations[currentLang].emptyInputAlert);
     return;
   }
   
-  const originalText = aiGenerateBtn.innerHTML;
-  aiGenerateBtn.innerHTML = "Düşünüyor... 🤔";
   aiGenerateBtn.disabled = true;
+  aiGenerateBtn.innerHTML = `<span class="magic-icon">⏳</span> <span>${translations[currentLang].generatingText}</span>`;
 
   try {
-    const recipe = await generateRecipeFromGemini(ingredients);
-    openRecipe(recipe);
-  } catch (err) {
-    alert(err.message);
+    const aiRecipe = await generateRecipeFromGemini(ingredients);
+    
+    // Rastgele bir ID atayalım
+    aiRecipe.id = Date.now();
+    
+    // Ekranı değiştir
+    openRecipe(aiRecipe);
+    ingredientInput.value = '';
+
+  } catch (error) {
+    console.error("AI Tarif Hatası:", error);
+    alert(translations[currentLang].errorText + "\n" + error.message);
   } finally {
-    aiGenerateBtn.innerHTML = originalText;
     aiGenerateBtn.disabled = false;
+    aiGenerateBtn.innerHTML = `<span class="magic-icon">✨</span> <span data-i18n="generateBtn">${translations[currentLang].generateBtn}</span>`;
   }
 }
 
@@ -458,10 +509,11 @@ function toggleSaveCurrentRecipe() {
   }
   
   const saveBtn = document.getElementById('save-btn');
-  if (saveBtn) {
+  const saveBtnText = document.getElementById('save-btn-text');
+  if (saveBtn && saveBtnText) {
     const newlySaved = isRecipeSaved(currentRecipe.title);
-    saveBtn.innerHTML = `<span>${newlySaved ? '🔖' : '📑'}</span> <span>${newlySaved ? 'Kaydedildi' : 'Tarifi Kaydet'}</span>`;
-    saveBtn.title = newlySaved ? 'Kaydedilenlerden Çıkar' : 'Tarifi Kaydet';
+    saveBtn.innerHTML = `<span>${newlySaved ? '🔖' : '📑'}</span> <span id="save-btn-text">${newlySaved ? translations[currentLang].savedBtnText : translations[currentLang].saveBtnText}</span>`;
+    saveBtn.title = newlySaved ? translations[currentLang].savedBtnText : translations[currentLang].saveBtnText;
     saveBtn.classList.toggle('active', newlySaved);
   }
 }
@@ -482,15 +534,23 @@ function renderRecipeSteps() {
     </div>
   `;
 
+  const imageHtml = currentRecipe.imagePrompt 
+    ? `<div class="recipe-image-container">
+         <img src="https://image.pollinations.ai/prompt/${encodeURIComponent(currentRecipe.imagePrompt)}?width=800&height=400&nologo=true" alt="${currentRecipe.title}" class="recipe-main-image" onerror="this.style.display='none'">
+       </div>` 
+    : '';
+
   recipeView.innerHTML = `
     <div class="recipe-header">
       <button class="back-btn" id="back-btn">←</button>
       <h2>${currentRecipe.icon || '🍽️'} ${currentRecipe.title}</h2>
-      <button class="save-btn ${isSaved ? 'active' : ''}" id="save-btn" title="${isSaved ? 'Kaydedilenlerden Çıkar' : 'Tarifi Kaydet'}">
-        <span>${isSaved ? '🔖' : '📑'}</span> <span>${isSaved ? 'Kaydedildi' : 'Tarifi Kaydet'}</span>
+      <button class="save-btn ${isSaved ? 'active' : ''}" id="save-btn" title="${isSaved ? translations[currentLang].savedBtnText : translations[currentLang].saveBtnText}">
+        <span>${isSaved ? '🔖' : '📑'}</span> <span id="save-btn-text">${isSaved ? translations[currentLang].savedBtnText : translations[currentLang].saveBtnText}</span>
       </button>
     </div>
     
+    ${imageHtml}
+
     ${currentRecipe.calories || currentRecipe.time || currentRecipe.cost ? badgesHTML : ''}
     
     <div class="step-container">

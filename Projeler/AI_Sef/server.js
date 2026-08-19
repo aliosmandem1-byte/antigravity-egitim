@@ -87,6 +87,7 @@ DİKKAT: Çıktı sadece ve sadece aşağıdaki formatta saf JSON olmalı, baş�
   "calories": "🔥 350 kcal",
   "time": "⏳ 15 Dk",
   "cost": "🤑 Çok Ekonomik (30-50 ₺)",
+  "imagePrompt": "A highly detailed, cinematic, 4k food photography of [English description of the recipe], appetizing, restaurant quality, warm lighting",
   "steps": ["Adım 1: ...", "Adım 2: ...", "Adım 3: ..."]
 }`;
 
