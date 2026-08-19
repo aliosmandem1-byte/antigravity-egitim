@@ -89,7 +89,7 @@ DİKKAT: Çıktı sadece ve sadece aşağıdaki formatta saf JSON olmalı, baş�
   "calories": "🔥 350 kcal",
   "time": "⏳ 15 Dk",
   "cost": "🤑 Çok Ekonomik (30-50 ₺)",
-  "imagePrompt": "A highly detailed, hyper-realistic, 8k photorealistic food photography of [EXACT ENGLISH NAME OF THE DISH YOU CREATED], professional culinary lighting, authentic and accurate representation. If the ingredients are absurd, portray the dish in the most logical and visually stunning realistic form possible, appetizing.",
+  "imagePrompt": "Sadece İngilizce olarak, yemeğin net ve profesyonel fotoğraf promptu (Örn: 'Delicious Chicken Parmesan, professional food photography, 8k resolution, macro shot, beautifully plated, studio lighting')",
   "steps": ["Adım 1: ...", "Adım 2: ...", "Adım 3: ..."]
 }`;
 
