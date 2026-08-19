@@ -221,6 +221,14 @@ function setupEventListeners() {
   if (personaSelect) {
     personaSelect.addEventListener('change', (e) => {
       currentPersona = e.target.value;
+      const hintMap = {
+        'standart': 'Her türlü yemeği tam ölçüsüyle profesyonelce anlatır.',
+        'angry': 'Disiplinli, lafını esirgemeyen ama mükemmel sonuç veren tarifler.',
+        'mom': 'Göz kararı, bol sevgiyle ve ev yapımı sıcaklığında tarifler.',
+        'student': 'En az bulaşıkla, en ucuz malzemeyle hızlı doyuran tarifler.'
+      };
+      const hintEl = document.getElementById('persona-hint');
+      if(hintEl) hintEl.innerText = hintMap[currentPersona];
     });
   }
 }
@@ -452,7 +460,7 @@ function toggleSaveCurrentRecipe() {
   const saveBtn = document.getElementById('save-btn');
   if (saveBtn) {
     const newlySaved = isRecipeSaved(currentRecipe.title);
-    saveBtn.innerHTML = newlySaved ? '🔖' : '📑';
+    saveBtn.innerHTML = `<span>${newlySaved ? '🔖' : '📑'}</span> <span>${newlySaved ? 'Kaydedildi' : 'Tarifi Kaydet'}</span>`;
     saveBtn.title = newlySaved ? 'Kaydedilenlerden Çıkar' : 'Tarifi Kaydet';
     saveBtn.classList.toggle('active', newlySaved);
   }
@@ -479,7 +487,7 @@ function renderRecipeSteps() {
       <button class="back-btn" id="back-btn">←</button>
       <h2>${currentRecipe.icon || '🍽️'} ${currentRecipe.title}</h2>
       <button class="save-btn ${isSaved ? 'active' : ''}" id="save-btn" title="${isSaved ? 'Kaydedilenlerden Çıkar' : 'Tarifi Kaydet'}">
-        ${isSaved ? '🔖' : '📑'}
+        <span>${isSaved ? '🔖' : '📑'}</span> <span>${isSaved ? 'Kaydedildi' : 'Tarifi Kaydet'}</span>
       </button>
     </div>
     

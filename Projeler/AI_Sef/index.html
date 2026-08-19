@@ -25,12 +25,15 @@
             <p class="subtitle" data-i18n="headerSubtitle">Yemek yapmayı bilmeyenler için aşırı basit rehber</p>
           </div>
           <div class="header-controls">
-            <select id="persona-select" class="glass-dropdown">
-              <option value="standart" data-i18n="chefStandart">👨‍🍳 Standart Şef</option>
-              <option value="angry" data-i18n="chefAngry">🤬 Sinirli Şef (Ramsay)</option>
-              <option value="mom" data-i18n="chefMom">👵 Sevecen Anne</option>
-              <option value="student" data-i18n="chefStudent">🎓 Üşengeç Öğrenci</option>
-            </select>
+            <div class="persona-wrapper">
+              <select id="persona-select" class="glass-dropdown">
+                <option value="standart" data-i18n="chefStandart">👨‍🍳 Standart Şef</option>
+                <option value="angry" data-i18n="chefAngry">🤬 Sinirli Şef (Ramsay)</option>
+                <option value="mom" data-i18n="chefMom">👵 Sevecen Anne</option>
+                <option value="student" data-i18n="chefStudent">🎓 Üşengeç Öğrenci</option>
+              </select>
+              <p id="persona-hint" class="persona-hint">Her türlü yemeği tam ölçüsüyle profesyonelce anlatır.</p>
+            </div>
             <select id="language-select" class="glass-dropdown">
               <option value="tr">🇹🇷 TR</option>
               <option value="en">🇬🇧 EN</option>
