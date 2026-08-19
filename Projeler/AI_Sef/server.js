@@ -16,6 +16,17 @@ app.use(express.json());
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // API Rotaları
+app.get('/api/models', async (req, res) => {
+  try {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) return res.status(500).json({ error: "No API KEY" });
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+    const data = await response.json();
+    res.status(200).json(data);
+  } catch(e) {
+    res.status(500).json({ error: e.message });
+  }
+});
 app.post('/api/generateRecipe', async (req, res) => {
   const { ingredients, language = 'tr', persona = 'standart' } = req.body;
   if (!ingredients) {
