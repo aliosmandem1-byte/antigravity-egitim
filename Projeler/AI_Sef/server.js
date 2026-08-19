@@ -30,7 +30,6 @@ app.post('/api/generateRecipe', async (req, res) => {
   try {
     // Resmi Google SDK'sını başlat
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     
     // Şef moduna göre karakter ayarı
     let personaPrompt = "Sen sadece en temel yemekleri bilen, profesyonellikten uzak, yemek yapmayı HİÇ bilmeyenlere öğreten 'Standart' bir AI Şef'sin.";
@@ -70,9 +69,30 @@ DİKKAT: Çıktı sadece ve sadece aşağıdaki formatta saf JSON olmalı, baş�
   "steps": ["Adım 1: ...", "Adım 2: ...", "Adım 3: ..."]
 }`;
 
-    // SDK üzerinden generateContent çağrısı
-    const result = await model.generateContent(prompt);
-    const responseText = result.response.text();
+    // Olası modeller (biri 404 verirse diğerine geçmek için)
+    const modelsToTry = ["gemini-1.5-flash", "gemini-1.0-pro", "gemini-1.5-pro"];
+    let responseText = null;
+    let lastError = null;
+
+    for (const modelName of modelsToTry) {
+      try {
+        const model = genAI.getGenerativeModel({ model: modelName });
+        const result = await model.generateContent(prompt);
+        responseText = result.response.text();
+        break; // Başarılı olursa döngüden çık
+      } catch (err) {
+        lastError = err;
+        console.warn(`Model ${modelName} başarısız oldu:`, err.message);
+        // Eğer hata 404 ise bir sonraki modele geç, değilse döngüyü kır
+        if (!err.message.includes("404")) {
+           break;
+        }
+      }
+    }
+
+    if (!responseText) {
+      throw lastError || new Error("Hiçbir model çalışmadı.");
+    }
     
     // Gelen JSON'ı çözümle ve sadece JSON kısmını ayıkla (eğer markdown geldiyse)
     const jsonMatch = responseText.match(/\{[\s\S]*\}/);
