@@ -152,34 +152,68 @@ input[type="text"]:focus, input[type="password"]:focus {
 }
 
 .primary-btn {
-  background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+  background: linear-gradient(270deg, #f43f5e, #8b5cf6, #3b82f6, #f43f5e);
+  background-size: 300% 300%;
+  animation: gradientShift 4s ease infinite;
   color: white;
   border: none;
-  padding: 16px;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  font-weight: 600;
+  padding: 18px 24px;
+  border-radius: 16px;
+  font-size: 1.2rem;
+  font-weight: 800;
   font-family: var(--font-heading);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 10px 15px -3px rgba(244, 63, 94, 0.3);
+  gap: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 10px 25px -5px rgba(244, 63, 94, 0.5), 0 0 15px rgba(139, 92, 246, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .primary-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 15px 20px -3px rgba(244, 63, 94, 0.4);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 15px 35px -5px rgba(244, 63, 94, 0.6), 0 0 25px rgba(139, 92, 246, 0.6);
 }
 
 .primary-btn:active {
-  transform: translateY(0);
+  transform: translateY(1px) scale(0.98);
+}
+
+.primary-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+  transform: skewX(-25deg);
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% { left: -100%; }
+  20% { left: 200%; }
+  100% { left: 200%; }
 }
 
 .magic-icon {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
+  animation: float 2s infinite ease-in-out;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px) scale(1.1); }
 }
 
 /* Quick Recipes */
