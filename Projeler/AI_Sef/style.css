@@ -133,6 +133,14 @@ h1 {
   gap: 16px;
 }
 
+.input-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 12px;
+  line-height: 1.4;
+  opacity: 0.8;
+}
+
 input[type="text"], input[type="password"] {
   width: 100%;
   padding: 16px 20px;

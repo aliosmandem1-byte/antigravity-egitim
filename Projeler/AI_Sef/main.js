@@ -54,7 +54,8 @@ const translations = {
     savedBtnText: "Kaydedildi",
     generatingText: "Düşünüyor... 🤔",
     errorText: "Tarif oluşturulamadı. Lütfen tekrar dene.",
-    emptyInputAlert: "Lütfen dolabındaki malzemeleri yaz! (Örn: Domates, yumurta)"
+    emptyInputAlert: "Lütfen dolabındaki malzemeleri yaz! (Örn: Domates, yumurta)",
+    inputHint: "💡 İpucu: İster elindeki malzemeleri yaz, istersen doğrudan 'Sezar Salata' gibi istediğin bir tarifin adını yaz!"
   },
   en: {
     headerSubtitle: "Extremely simple guide for those who don't know how to cook",
@@ -71,7 +72,8 @@ const translations = {
     savedBtnText: "Saved",
     generatingText: "Thinking... 🤔",
     errorText: "Failed to generate recipe. Please try again.",
-    emptyInputAlert: "Please write your ingredients! (Ex: Tomato, eggs)"
+    emptyInputAlert: "Please write your ingredients! (Ex: Tomato, eggs)",
+    inputHint: "💡 Hint: You can write your available ingredients, or directly ask for a specific recipe like 'Caesar Salad'!"
   },
   de: {
     headerSubtitle: "Extrem einfache Anleitung für diejenigen, die nicht kochen können",
@@ -88,7 +90,8 @@ const translations = {
     savedBtnText: "Gespeichert",
     generatingText: "Denkt nach... 🤔",
     errorText: "Rezept konnte nicht erstellt werden. Bitte versuche es erneut.",
-    emptyInputAlert: "Bitte schreibe deine Zutaten! (Bsp: Tomate, Eier)"
+    emptyInputAlert: "Bitte schreibe deine Zutaten! (Bsp: Tomate, Eier)",
+    inputHint: "💡 Tipp: Gib deine Zutaten ein oder frage direkt nach einem Rezept wie 'Caesar Salat'!"
   },
   es: {
     headerSubtitle: "Guía extremadamente simple para aquellos que no saben cocinar",
@@ -105,7 +108,8 @@ const translations = {
     savedBtnText: "Guardado",
     generatingText: "Pensando... 🤔",
     errorText: "No se pudo generar la receta. Inténtalo de nuevo.",
-    emptyInputAlert: "¡Por favor escribe tus ingredientes! (Ej: Tomate, huevos)"
+    emptyInputAlert: "¡Por favor escribe tus ingredientes! (Ej: Tomate, huevos)",
+    inputHint: "💡 Consejo: ¡Escribe tus ingredientes disponibles o pide directamente una receta como 'Ensalada César'!"
   }
 };
 

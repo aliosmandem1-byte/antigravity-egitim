@@ -73,8 +73,8 @@ app.post('/api/generateRecipe', async (req, res) => {
     }
 
     const prompt = `${personaPrompt}
-Kullanıcının elindeki malzemeler: "${ingredients}". 
-Bu malzemelere göre (veya ek birkaç temel malzeme ekleyerek) AŞIRI BASİT bir yemek tarifi oluştur. Gram/mililitre kullanma; 'su bardağı', 'tatlı kaşığı', 'göz kararı' gibi şeyler kullan.
+Kullanıcının elindeki malzemeler veya istediği tarif: "${ingredients}". 
+Kullanıcı bir malzeme listesi verdiyse ona göre, doğrudan bir tarif adı verdiyse o tarife göre AŞIRI BASİT bir yemek tarifi oluştur. Eğer kullanıcı birbiriyle uyumsuz veya saçma malzemeler verdiyse bile bunu yenebilir ve mantıklı bir hale getirerek tarifleştir. Gram/mililitre kullanma; 'su bardağı', 'tatlı kaşığı', 'göz kararı' gibi şeyler kullan.
 Ayrıca, yemeğin kalorisini, hazırlanma süresini ve tahmini maliyetini de hesapla. Maliyet için genel kitleye hitap eden kelimeler kullan (Örn: Türkçe için "Çok Ekonomik", İngilizce için "Very Cheap") ve yanına tahmini fiyat aralığını yaz.
 
 ${langInstruction}
@@ -87,7 +87,7 @@ DİKKAT: Çıktı sadece ve sadece aşağıdaki formatta saf JSON olmalı, baş�
   "calories": "🔥 350 kcal",
   "time": "⏳ 15 Dk",
   "cost": "🤑 Çok Ekonomik (30-50 ₺)",
-  "imagePrompt": "A highly detailed, cinematic, 4k food photography of [English description of the recipe], appetizing, restaurant quality, warm lighting",
+  "imagePrompt": "A highly detailed, hyper-realistic, 8k photorealistic food photography of [EXACT ENGLISH NAME OF THE DISH YOU CREATED], professional culinary lighting, authentic and accurate representation. If the ingredients are absurd, portray the dish in the most logical and visually stunning realistic form possible, appetizing.",
   "steps": ["Adım 1: ...", "Adım 2: ...", "Adım 3: ..."]
 }`;
 
