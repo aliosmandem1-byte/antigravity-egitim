@@ -344,26 +344,53 @@ function readCurrentStep() {
   const textToRead = currentRecipe.steps[currentStepIndex];
   const utterance = new SpeechSynthesisUtterance(textToRead);
   
-  // Dil ayarını mevcut UI diline göre yap (Aksanı ayarlar)
-  if (currentLang === 'en') utterance.lang = 'en-US';
-  else if (currentLang === 'de') utterance.lang = 'de-DE';
-  else if (currentLang === 'es') utterance.lang = 'es-ES';
-  else utterance.lang = 'tr-TR';
+  let targetLang = 'tr-TR';
+  if (currentLang === 'en') targetLang = 'en-US';
+  else if (currentLang === 'de') targetLang = 'de-DE';
+  else if (currentLang === 'es') targetLang = 'es-ES';
+  utterance.lang = targetLang;
   
-  // Şef moduna göre ses tonu ve hız ayarı
+  // Sistemdeki sesleri al
+  const voices = window.speechSynthesis.getVoices();
+  const langVoices = voices.filter(v => v.lang.includes(targetLang.split('-')[0]));
+  
+  // Kadın/Erkek sesi bulmak için yaygın isimleri ve kelimeleri arayalım
+  const femaleKeywords = ['ayşe', 'yelda', 'female', 'woman', 'zira', 'samantha', 'victoria', 'hazel', 'google türkçe kadın'];
+  const maleKeywords = ['tolga', 'ozan', 'male', 'man', 'david', 'alex', 'george', 'google türkçe erkek'];
+  
+  let selectedVoice = null;
+
+  // Şef moduna göre ses tonu, hız ve kadın/erkek ayarı
   if (currentPersona === 'angry') {
-    utterance.rate = 1.25; // Hızlı, agresif
-    utterance.pitch = 0.7; // Kalın ses (Ramsay)
+    utterance.rate = 1.25; 
+    utterance.pitch = 0.7; 
+    selectedVoice = langVoices.find(v => maleKeywords.some(kw => v.name.toLowerCase().includes(kw)));
   } else if (currentPersona === 'mom') {
-    utterance.rate = 0.9;  // Yavaş, tane tane
-    utterance.pitch = 1.4; // İnce, sevecen ses
+    utterance.rate = 0.9;  
+    utterance.pitch = 1.4; 
+    selectedVoice = langVoices.find(v => femaleKeywords.some(kw => v.name.toLowerCase().includes(kw)));
   } else if (currentPersona === 'student') {
-    utterance.rate = 1.15; // Hızlı, aceleci
-    utterance.pitch = 1.1; // Hafif heyecanlı/genç
+    utterance.rate = 1.15; 
+    utterance.pitch = 1.1; 
+    selectedVoice = langVoices.find(v => maleKeywords.some(kw => v.name.toLowerCase().includes(kw)));
   } else {
-    // Standart Şef
+    // Standart Şef (Erkek tercih edelim)
     utterance.rate = 1.0; 
     utterance.pitch = 1.0; 
+    selectedVoice = langVoices.find(v => maleKeywords.some(kw => v.name.toLowerCase().includes(kw)));
+  }
+  
+  // Eğer özel bir ses bulduysak atayalım, bulamadıysak dilin ilk sesini kullanalım
+  if (selectedVoice) {
+    utterance.voice = selectedVoice;
+  } else if (langVoices.length > 0) {
+    // Eğer 'mom' ise ve sistemde sadece 2 ses varsa, muhtemelen 2. ses (veya 1.) kadındır.
+    // (Örn: Windows'ta 0: Tolga, 1: Ayşe olabilir)
+    if (currentPersona === 'mom' && langVoices.length > 1) {
+       utterance.voice = langVoices[1]; // Şansımızı 2. sesten yana kullanalım
+    } else {
+       utterance.voice = langVoices[0];
+    }
   }
   
   window.speechSynthesis.speak(utterance);
