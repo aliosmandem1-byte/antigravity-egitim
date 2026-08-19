@@ -15,7 +15,7 @@ app.use(express.json());
 
 // API Rotaları
 app.post('/api/generateRecipe', async (req, res) => {
-  const { ingredients } = req.body;
+  const { ingredients, language = 'tr', persona = 'standart' } = req.body;
   if (!ingredients) {
     return res.status(400).json({ error: 'Malzemeler eksik' });
   }
@@ -27,8 +27,34 @@ app.post('/api/generateRecipe', async (req, res) => {
 
   try {
     const targetModel = "models/gemini-pro";
-    const prompt = `Sen sadece en temel yemekleri bilen, profesyonellikten uzak, yemek yapmayı HİÇ bilmeyenlere öğreten 'AI Şef'sin. Kullanıcının elindeki malzemeler: "${ingredients}". Bu malzemelere göre (veya ek birkaç temel malzeme ekleyerek) AŞIRI BASİT bir yemek tarifi oluştur. Gram/mililitre kullanma; 'su bardağı', 'tatlı kaşığı', 'göz kararı' gibi şeyler kullan.
-Ayrıca, Türkiye'deki güncel market fiyatlarını baz alarak yemeğin kalorisini, hazırlanma süresini ve tahmini maliyetini de hesapla. Maliyet için genel kitleye hitap eden kelimeler kullan ("Çok Ekonomik", "Ortalama Maliyet", "Biraz Maliyetli" gibi) ve yanına tahmini bir TL (₺) aralığı yaz (Örn: "Çok Ekonomik (30-50 ₺)").
+    
+    // Şef moduna göre karakter ayarı
+    let personaPrompt = "Sen sadece en temel yemekleri bilen, profesyonellikten uzak, yemek yapmayı HİÇ bilmeyenlere öğreten 'Standart' bir AI Şef'sin.";
+    if (persona === 'angry') {
+      personaPrompt = "Sen 'Gordon Ramsay' tarzı, sürekli şikayet eden, mükemmeliyetçi ama bir o kadar da acımasız ve komik bir şefsin. Tarif verirken kullanıcıyı hafifçe (esprili bir şekilde) azarla.";
+    } else if (persona === 'mom') {
+      personaPrompt = "Sen dünyalar tatlısı, şefkatli ve sürekli 'yavrum, evladım' diye hitap eden geleneksel bir Anadolu annesisin. Tarif verirken bol bol sevgi sözcükleri kullan ve öğütler ver.";
+    } else if (persona === 'student') {
+      personaPrompt = "Sen parasız, üşengeç ve sürekli pratik taktikler arayan bir üniversite öğrencisisin. Tariflerin aşırı pratik, bulaşık çıkarmayan ve ucuza kaçan türden olsun.";
+    }
+
+    // Dile göre para birimi ve dil ayarı
+    let langInstruction = "Tüm cevabını KESİNLİKLE Türkçe (TR) olarak ver. Fiyat hesaplamasını Türkiye (TL - ₺) şartlarına göre yap.";
+    if (language === 'en') {
+      langInstruction = "Give your ENTIRE response STRICTLY in English (EN). Calculate the estimated cost using US Dollars ($) based on US market prices.";
+    } else if (language === 'de') {
+      langInstruction = "Gib deine GESAMTE Antwort AUSSCHLIESSLICH auf Deutsch (DE) ab. Berechne die geschätzten Kosten in Euro (€) basierend auf den Preisen auf dem deutschen Markt.";
+    } else if (language === 'es') {
+      langInstruction = "Da TODA tu respuesta ESTRICTAMENTE en Español (ES). Calcula el costo estimado usando Euros (€) o Dólares ($) según precios promedio.";
+    }
+
+    const prompt = `${personaPrompt}
+Kullanıcının elindeki malzemeler: "${ingredients}". 
+Bu malzemelere göre (veya ek birkaç temel malzeme ekleyerek) AŞIRI BASİT bir yemek tarifi oluştur. Gram/mililitre kullanma; 'su bardağı', 'tatlı kaşığı', 'göz kararı' gibi şeyler kullan.
+Ayrıca, yemeğin kalorisini, hazırlanma süresini ve tahmini maliyetini de hesapla. Maliyet için genel kitleye hitap eden kelimeler kullan (Örn: Türkçe için "Çok Ekonomik", İngilizce için "Very Cheap") ve yanına tahmini fiyat aralığını yaz.
+
+${langInstruction}
+
 DİKKAT: Çıktı sadece ve sadece aşağıdaki formatta saf JSON olmalı, başında veya sonunda markdown (örneğin \`\`\`json) olmamalı!
 {
   "title": "Tarif Adı",

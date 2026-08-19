@@ -37,6 +37,54 @@ const fallbackRecipes = [
   }
 ];
 
+// --- Sözlük (i18n) ---
+const translations = {
+  tr: {
+    heroTitle: "Bugün ne pişirelim?",
+    heroSubtitle: "Dolaptaki malzemelerini yaz veya önerdiğimiz garanti tariflerden birini seç.",
+    generateBtn: "AI ile Tarif Bul",
+    savedRecipesTitle: "🔖 Kaydettiğin Tarifler",
+    quickRecipesTitle: "Asla Hata Yapmayacağın 3 Tarif",
+    chefStandart: "👨‍🍳 Standart Şef",
+    chefAngry: "🤬 Sinirli Şef (Ramsay)",
+    chefMom: "👵 Sevecen Anne",
+    chefStudent: "🎓 Üşengeç Öğrenci"
+  },
+  en: {
+    heroTitle: "What should we cook today?",
+    heroSubtitle: "Write your ingredients in the fridge or choose from our guaranteed recipes.",
+    generateBtn: "Find Recipe with AI",
+    savedRecipesTitle: "🔖 Saved Recipes",
+    quickRecipesTitle: "3 Foolproof Recipes",
+    chefStandart: "👨‍🍳 Standard Chef",
+    chefAngry: "🤬 Angry Chef (Ramsay)",
+    chefMom: "👵 Loving Mom",
+    chefStudent: "🎓 Lazy Student"
+  },
+  de: {
+    heroTitle: "Was kochen wir heute?",
+    heroSubtitle: "Schreiben Sie Ihre Zutaten auf oder wählen Sie ein garantiertes Rezept.",
+    generateBtn: "Rezept mit KI finden",
+    savedRecipesTitle: "🔖 Gespeicherte Rezepte",
+    quickRecipesTitle: "3 Todsichere Rezepte",
+    chefStandart: "👨‍🍳 Standardkoch",
+    chefAngry: "🤬 Wütender Koch",
+    chefMom: "👵 Liebevolle Mutter",
+    chefStudent: "🎓 Fauler Student"
+  },
+  es: {
+    heroTitle: "¿Qué cocinamos hoy?",
+    heroSubtitle: "Escribe tus ingredientes o elige una receta garantizada.",
+    generateBtn: "Buscar receta con IA",
+    savedRecipesTitle: "🔖 Recetas guardadas",
+    quickRecipesTitle: "3 Recetas Infalibles",
+    chefStandart: "👨‍🍳 Chef Estándar",
+    chefAngry: "🤬 Chef Enojado",
+    chefMom: "👵 Mamá Amorosa",
+    chefStudent: "🎓 Estudiante Perezoso"
+  }
+};
+
 // --- DOM Elementleri ---
 const homeView = document.getElementById('home-view');
 const recipeView = document.getElementById('recipe-view');
@@ -45,12 +93,27 @@ const savedRecipesSection = document.getElementById('saved-recipes-section');
 const savedRecipeCards = document.getElementById('saved-recipe-cards');
 const aiGenerateBtn = document.getElementById('ai-generate-btn');
 const ingredientInput = document.getElementById('ingredient-input');
+const languageSelect = document.getElementById('language-select');
+const personaSelect = document.getElementById('persona-select');
 
 // --- State ---
 let currentRecipe = null;
 let currentStepIndex = 0;
-let recognition = null; // SpeechRecognition objesi
-let isReadAloudActive = false; // Sesli asistan (Text-to-Speech) durumu
+let recognition = null;
+let isReadAloudActive = false;
+let currentLang = 'tr';
+let currentPersona = 'standart';
+
+// --- i18n Dil Fonksiyonu ---
+function updateLanguage() {
+  const dict = translations[currentLang] || translations['tr'];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (dict[key]) {
+      el.textContent = dict[key];
+    }
+  });
+}
 
 // --- LocalStorage Fonksiyonları ---
 function getSavedRecipes() {
@@ -149,6 +212,17 @@ function setupEventListeners() {
       }
     });
   }
+  if (languageSelect) {
+    languageSelect.addEventListener('change', (e) => {
+      currentLang = e.target.value;
+      updateLanguage();
+    });
+  }
+  if (personaSelect) {
+    personaSelect.addEventListener('change', (e) => {
+      currentPersona = e.target.value;
+    });
+  }
 }
 
 // --- Gerçek AI API Çağrısı (Kendi Backend'imize) ---
@@ -159,7 +233,7 @@ async function generateRecipeFromGemini(ingredients) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ingredients })
+      body: JSON.stringify({ ingredients, language: currentLang, persona: currentPersona })
     });
 
     if (!response.ok) {
