@@ -89,7 +89,6 @@ DİKKAT: Çıktı sadece ve sadece aşağıdaki formatta saf JSON olmalı, baş�
   "calories": "🔥 350 kcal",
   "time": "⏳ 15 Dk",
   "cost": "🤑 Çok Ekonomik (30-50 ₺)",
-  "imagePrompt": "DİKKAT FOTOĞRAF MANTIĞI: Sadece ve sadece İngilizce fotoğraf promptu yaz. Açıklama yazma. EĞER tarif herkesçe bilinen gerçek bir yemekse (örn: Lahmacun, Pilav) onun birebir ultra gerçekçi İngilizce fotoğraf promptunu yaz (Örn: 'Authentic Turkish Lahmacun, professional food photography...'). AMA eğer tarif kullanıcının verdiği uyumsuz malzemelerle senin uydurduğun fantastik bir yemekse, görselde o uyumsuz malzemeleri göstermeye ZORLAMA. Onun yerine o yemeğin türüne (sandviç, güveç vb.) uygun, inanılmaz iştah açıcı, jenerik bir profesyonel yemek fotoğrafı promptu yaz (Örn: 'Delicious gourmet hot casserole, professional food photography, 8k resolution, macro shot, beautifully plated').",
   "steps": ["Adım 1: ...", "Adım 2: ...", "Adım 3: ..."]
 }`;
 

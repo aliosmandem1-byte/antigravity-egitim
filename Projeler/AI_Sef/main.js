@@ -613,11 +613,7 @@ function renderRecipeSteps() {
     </div>
   `;
 
-  const imageHtml = currentRecipe.imagePrompt 
-    ? `<div class="recipe-image-container">
-         <img src="https://image.pollinations.ai/prompt/${encodeURIComponent(currentRecipe.imagePrompt)}?width=800&height=400&nologo=true" alt="${currentRecipe.title}" class="recipe-main-image" onerror="this.style.display='none'">
-       </div>` 
-    : '';
+  const imageHtml = '';
 
   recipeView.innerHTML = `
     <div class="recipe-header">
@@ -627,8 +623,6 @@ function renderRecipeSteps() {
         <span>${isSaved ? '🔖' : '📑'}</span> <span id="save-btn-text">${isSaved ? translations[currentLang].savedBtnText : translations[currentLang].saveBtnText}</span>
       </button>
     </div>
-    
-    ${imageHtml}
 
     ${currentRecipe.calories || currentRecipe.time || currentRecipe.cost ? badgesHTML : ''}
     
