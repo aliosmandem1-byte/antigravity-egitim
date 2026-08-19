@@ -34,6 +34,7 @@
               </select>
               <p id="persona-hint" class="persona-hint">Her türlü yemeği tam ölçüsüyle profesyonelce anlatır.</p>
             </div>
+            <button id="guide-btn" class="guide-btn" data-i18n="guideBtn">📖 Nasıl Kullanılır?</button>
             <select id="language-select" class="glass-dropdown">
               <option value="tr">🇹🇷 TR</option>
               <option value="en">🇬🇧 EN</option>
@@ -66,12 +67,27 @@
           </div>
         </main>
 
-        <!-- Tarif Adım Adım (Carousel) Görünümü -->
         <section class="recipe-view hidden" id="recipe-view">
            <!-- JS ile doldurulacak -->
         </section>
 
       </div>
+      
+      <!-- Kullanım Rehberi Modal -->
+      <div id="guide-modal" class="modal hidden">
+        <div class="modal-content glass-container">
+          <span id="close-guide" class="close-btn">&times;</span>
+          <h2 data-i18n="guideTitle">📖 KitchAI Nasıl Kullanılır?</h2>
+          <ul class="guide-list">
+            <li><span class="emoji">📝</span> <b data-i18n="guideStep1Title">Tarif Arama:</b> <span data-i18n="guideStep1Desc">Elindeki malzemeleri veya istediğin yemek adını yaz. Büyülü butona bas!</span></li>
+            <li><span class="emoji">👨‍🍳</span> <b data-i18n="guideStep2Title">Şef Seçimi:</b> <span data-i18n="guideStep2Desc">Farklı tarzlarda (Ramsay, Anne vb.) tarif ve sesler almak için şef tipini değiştir.</span></li>
+            <li><span class="emoji">🔊</span> <b data-i18n="guideStep3Title">Sesli Asistan:</b> <span data-i18n="guideStep3Desc">Tarif ekranında 'Bana Oku' butonuna basarak şefin tarifi sesli anlatmasını sağla.</span></li>
+            <li><span class="emoji">🎙️</span> <b data-i18n="guideStep4Title">Sesli Komut:</b> <span data-i18n="guideStep4Desc">Asistan konuşurken 'Sonraki', 'İleri' diyerek bir sonraki; 'Önceki', 'Geri' diyerek önceki adıma geç.</span></li>
+            <li><span class="emoji">🔖</span> <b data-i18n="guideStep5Title">Kaydetme:</b> <span data-i18n="guideStep5Desc">Beğendiğin tarifleri kaydetmek için tarif ekranındaki 'Tarifi Kaydet' butonuna bas.</span></li>
+          </ul>
+        </div>
+      </div>
+
     </div>
     <script type="module" src="/main.js?v=2"></script>
   </body>

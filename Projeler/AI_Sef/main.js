@@ -55,7 +55,19 @@ const translations = {
     generatingText: "Düşünüyor... 🤔",
     errorText: "Tarif oluşturulamadı. Lütfen tekrar dene.",
     emptyInputAlert: "Lütfen dolabındaki malzemeleri yaz! (Örn: Domates, yumurta)",
-    inputHint: "💡 İpucu: İster elindeki malzemeleri yaz, istersen doğrudan 'Sezar Salata' gibi istediğin bir tarifin adını yaz!"
+    inputHint: "💡 İpucu: İster elindeki malzemeleri yaz, istersen doğrudan 'Sezar Salata' gibi istediğin bir tarifin adını yaz!",
+    guideBtn: "📖 Nasıl Kullanılır?",
+    guideTitle: "📖 KitchAI Nasıl Kullanılır?",
+    guideStep1Title: "Tarif Arama:",
+    guideStep1Desc: "Elindeki malzemeleri veya istediğin yemek adını yaz. Büyülü butona bas!",
+    guideStep2Title: "Şef Seçimi:",
+    guideStep2Desc: "Farklı tarzlarda (Ramsay, Anne vb.) tarif ve sesler almak için şef tipini değiştir.",
+    guideStep3Title: "Sesli Asistan:",
+    guideStep3Desc: "Tarif ekranında 'Bana Oku' butonuna basarak şefin tarifi sesli anlatmasını sağla.",
+    guideStep4Title: "Sesli Komut:",
+    guideStep4Desc: "Asistan konuşurken 'Sonraki', 'İleri' diyerek bir sonraki; 'Önceki', 'Geri' diyerek önceki adıma geç.",
+    guideStep5Title: "Kaydetme:",
+    guideStep5Desc: "Beğendiğin tarifleri kaydetmek için tarif ekranındaki 'Tarifi Kaydet' butonuna bas."
   },
   en: {
     headerSubtitle: "Extremely simple guide for those who don't know how to cook",
@@ -73,7 +85,19 @@ const translations = {
     generatingText: "Thinking... 🤔",
     errorText: "Failed to generate recipe. Please try again.",
     emptyInputAlert: "Please write your ingredients! (Ex: Tomato, eggs)",
-    inputHint: "💡 Hint: You can write your available ingredients, or directly ask for a specific recipe like 'Caesar Salad'!"
+    inputHint: "💡 Hint: You can write your available ingredients, or directly ask for a specific recipe like 'Caesar Salad'!",
+    guideBtn: "📖 How to Use?",
+    guideTitle: "📖 How to Use KitchAI?",
+    guideStep1Title: "Recipe Search:",
+    guideStep1Desc: "Write your ingredients or desired dish name. Click the magic button!",
+    guideStep2Title: "Chef Selection:",
+    guideStep2Desc: "Change the chef persona (Ramsay, Mom, etc.) to get different styles and voices.",
+    guideStep3Title: "Voice Assistant:",
+    guideStep3Desc: "Click 'Read to Me' on the recipe screen to have the chef narrate the recipe.",
+    guideStep4Title: "Voice Commands:",
+    guideStep4Desc: "While the assistant is speaking, say 'Next' or 'Forward' to go to the next step, or 'Previous' or 'Back' to go back.",
+    guideStep5Title: "Saving:",
+    guideStep5Desc: "Click the 'Save Recipe' button to bookmark your favorite recipes."
   },
   de: {
     headerSubtitle: "Extrem einfache Anleitung für diejenigen, die nicht kochen können",
@@ -91,7 +115,19 @@ const translations = {
     generatingText: "Denkt nach... 🤔",
     errorText: "Rezept konnte nicht erstellt werden. Bitte versuche es erneut.",
     emptyInputAlert: "Bitte schreibe deine Zutaten! (Bsp: Tomate, Eier)",
-    inputHint: "💡 Tipp: Gib deine Zutaten ein oder frage direkt nach einem Rezept wie 'Caesar Salat'!"
+    inputHint: "💡 Tipp: Gib deine Zutaten ein oder frage direkt nach einem Rezept wie 'Caesar Salat'!",
+    guideBtn: "📖 Wie benutzt man es?",
+    guideTitle: "📖 Wie man KitchAI benutzt?",
+    guideStep1Title: "Rezeptsuche:",
+    guideStep1Desc: "Schreibe deine Zutaten oder das gewünschte Gericht. Klicke auf den magischen Button!",
+    guideStep2Title: "Kochauswahl:",
+    guideStep2Desc: "Ändere den Koch (Ramsay, Mutter usw.), um verschiedene Stile und Stimmen zu erhalten.",
+    guideStep3Title: "Sprachassistent:",
+    guideStep3Desc: "Klicke auf dem Rezeptbildschirm auf 'Mir vorlesen', um das Rezept vom Koch erzählen zu lassen.",
+    guideStep4Title: "Sprachbefehle:",
+    guideStep4Desc: "Während der Assistent spricht, sage 'Weiter' oder 'Vorwärts', um zum nächsten Schritt zu gelangen, oder 'Zurück'.",
+    guideStep5Title: "Speichern:",
+    guideStep5Desc: "Klicke auf 'Rezept speichern', um deine Lieblingsrezepte zu markieren."
   },
   es: {
     headerSubtitle: "Guía extremadamente simple para aquellos que no saben cocinar",
@@ -109,7 +145,19 @@ const translations = {
     generatingText: "Pensando... 🤔",
     errorText: "No se pudo generar la receta. Inténtalo de nuevo.",
     emptyInputAlert: "¡Por favor escribe tus ingredientes! (Ej: Tomate, huevos)",
-    inputHint: "💡 Consejo: ¡Escribe tus ingredientes disponibles o pide directamente una receta como 'Ensalada César'!"
+    inputHint: "💡 Consejo: ¡Escribe tus ingredientes disponibles o pide directamente una receta como 'Ensalada César'!",
+    guideBtn: "📖 ¿Cómo usar?",
+    guideTitle: "📖 ¿Cómo usar KitchAI?",
+    guideStep1Title: "Buscar receta:",
+    guideStep1Desc: "Escribe tus ingredientes o el nombre del plato. ¡Haz clic en el botón mágico!",
+    guideStep2Title: "Elegir chef:",
+    guideStep2Desc: "Cambia el estilo del chef (Ramsay, Mamá, etc.) para obtener diferentes voces y tonos.",
+    guideStep3Title: "Asistente de voz:",
+    guideStep3Desc: "Haz clic en 'Léemelo' en la pantalla de la receta para que el chef narre.",
+    guideStep4Title: "Comandos de voz:",
+    guideStep4Desc: "Mientras el asistente habla, di 'Siguiente' o 'Adelante' para avanzar, o 'Anterior' o 'Atrás' para retroceder.",
+    guideStep5Title: "Guardar:",
+    guideStep5Desc: "Haz clic en 'Guardar receta' para marcar tus recetas favoritas."
   }
 };
 
@@ -283,6 +331,29 @@ function setupEventListeners() {
       updateLanguage();
     });
   }
+  
+  // Guide Modal Listeners
+  const guideBtn = document.getElementById('guide-btn');
+  const guideModal = document.getElementById('guide-modal');
+  const closeGuide = document.getElementById('close-guide');
+  
+  if (guideBtn && guideModal) {
+    guideBtn.addEventListener('click', () => {
+      guideModal.classList.remove('hidden');
+    });
+  }
+  
+  if (closeGuide && guideModal) {
+    closeGuide.addEventListener('click', () => {
+      guideModal.classList.add('hidden');
+    });
+  }
+  
+  window.addEventListener('click', (e) => {
+    if (e.target === guideModal) {
+      guideModal.classList.add('hidden');
+    }
+  });
 }
 
 // --- Gerçek AI API Çağrısı (Kendi Backend'imize) ---
