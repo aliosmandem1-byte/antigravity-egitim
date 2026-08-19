@@ -80,8 +80,14 @@ DİKKAT: Çıktı sadece ve sadece aşağıdaki formatta saf JSON olmalı, baş�
   "steps": ["Adım 1: ...", "Adım 2: ...", "Adım 3: ..."]
 }`;
 
-    // Olası modeller (biri 404 verirse diğerine geçmek için)
-    const modelsToTry = ["gemini-1.5-flash", "gemini-1.0-pro", "gemini-1.5-pro"];
+    // Olası modeller (Google son güncellemeyle eski modelleri bazı anahtarlarda kapattı, 2.0 ve 2.5 serisi eklendi)
+    const modelsToTry = [
+      "gemini-2.5-flash",
+      "gemini-2.0-flash", 
+      "gemini-1.5-flash", 
+      "gemini-1.0-pro", 
+      "gemini-1.5-pro"
+    ];
     let responseText = null;
     let lastError = null;
 
