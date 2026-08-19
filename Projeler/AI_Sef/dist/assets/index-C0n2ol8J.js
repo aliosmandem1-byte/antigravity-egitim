@@ -1,0 +1,50 @@
+(function(){let e=document.createElement(`link`).relList;if(e&&e.supports&&e.supports(`modulepreload`))return;for(let e of document.querySelectorAll(`link[rel="modulepreload"]`))n(e);new MutationObserver(e=>{for(let t of e)if(t.type===`childList`)for(let e of t.addedNodes)e.tagName===`LINK`&&e.rel===`modulepreload`&&n(e)}).observe(document,{childList:!0,subtree:!0});function t(e){let t={};return e.integrity&&(t.integrity=e.integrity),e.referrerPolicy&&(t.referrerPolicy=e.referrerPolicy),t.credentials=e.crossOrigin===`use-credentials`?`include`:e.crossOrigin===`anonymous`?`omit`:`same-origin`,t}function n(e){if(e.ep)return;e.ep=!0;let n=t(e);fetch(e.href,n)}})();var e=[{id:1,title:`Tavada Şipşak Pizza`,icon:`🍕`,desc:`Ana Malzemeler: Lavaş, Kaşar Peyniri, Sucuk, Salça.`,calories:`🔥 450 kcal`,time:`⏳ 10 Dk`,cost:`💰 Ortalama Maliyet (40-60 ₺)`,steps:[`Geniş bir tavaya 1 adet lavaş ekmeğini koy (altını henüz yakma).`,`1 yemek kaşığı salçayı biraz su ve kekik ile karıştırıp lavaşın üzerine sür.`,`Üzerine bolca rendelenmiş kaşar peyniri ve ince dilimlenmiş sucukları diz.`,`Tavanın altını en kısık ateşte aç ve kapağını kapat.`,`Peynirler tamamen eriyip lavaşın altı çıtırlaşana kadar (yaklaşık 5-7 dakika) bekle. Afiyet olsun!`]},{id:2,title:`5 Dakikada Fincan Kek`,icon:`🧁`,desc:`Ana Malzemeler: Un, Şeker, Kakao, Süt, Sıvı Yağ.`,calories:`🔥 320 kcal`,time:`⏳ 5 Dk`,cost:`🤑 Çok Ekonomik (15-20 ₺)`,steps:[`Büyük bir kupa fincanın içine 3 yemek kaşığı un, 2 yemek kaşığı şeker ve 1 yemek kaşığı kakao koyup karıştır.`,`Üzerine 3 yemek kaşığı süt ve 2 yemek kaşığı sıvı yağ ekle. Pürüzsüz olana kadar çatal ile iyice çırp.`,`İsteğe bağlı olarak içine bir parça çikolata atabilirsin.`,`Mikrodalga fırına koy ve en yüksek ayarda tam 1.5 - 2 dakika pişir.`,`Biraz soğumasını bekle ve kaşıklayarak ye. Afiyet olsun!`]}],t={tr:{heroTitle:`Bugün ne pişirelim?`,heroSubtitle:`Dolaptaki malzemelerini yaz veya önerdiğimiz garanti tariflerden birini seç.`,generateBtn:`AI ile Tarif Bul`,savedRecipesTitle:`🔖 Kaydettiğin Tarifler`,quickRecipesTitle:`Asla Hata Yapmayacağın 3 Tarif`,chefStandart:`👨‍🍳 Standart Şef`,chefAngry:`🤬 Sinirli Şef (Ramsay)`,chefMom:`👵 Sevecen Anne`,chefStudent:`🎓 Üşengeç Öğrenci`},en:{heroTitle:`What should we cook today?`,heroSubtitle:`Write your ingredients in the fridge or choose from our guaranteed recipes.`,generateBtn:`Find Recipe with AI`,savedRecipesTitle:`🔖 Saved Recipes`,quickRecipesTitle:`3 Foolproof Recipes`,chefStandart:`👨‍🍳 Standard Chef`,chefAngry:`🤬 Angry Chef (Ramsay)`,chefMom:`👵 Loving Mom`,chefStudent:`🎓 Lazy Student`},de:{heroTitle:`Was kochen wir heute?`,heroSubtitle:`Schreiben Sie Ihre Zutaten auf oder wählen Sie ein garantiertes Rezept.`,generateBtn:`Rezept mit KI finden`,savedRecipesTitle:`🔖 Gespeicherte Rezepte`,quickRecipesTitle:`3 Todsichere Rezepte`,chefStandart:`👨‍🍳 Standardkoch`,chefAngry:`🤬 Wütender Koch`,chefMom:`👵 Liebevolle Mutter`,chefStudent:`🎓 Fauler Student`},es:{heroTitle:`¿Qué cocinamos hoy?`,heroSubtitle:`Escribe tus ingredientes o elige una receta garantizada.`,generateBtn:`Buscar receta con IA`,savedRecipesTitle:`🔖 Recetas guardadas`,quickRecipesTitle:`3 Recetas Infalibles`,chefStandart:`👨‍🍳 Chef Estándar`,chefAngry:`🤬 Chef Enojado`,chefMom:`👵 Mamá Amorosa`,chefStudent:`🎓 Estudiante Perezoso`}},n=document.getElementById(`home-view`),r=document.getElementById(`recipe-view`),i=document.getElementById(`quick-recipe-cards`),a=document.getElementById(`saved-recipes-section`),o=document.getElementById(`saved-recipe-cards`),s=document.getElementById(`ai-generate-btn`),c=document.getElementById(`ingredient-input`),l=document.getElementById(`language-select`),u=document.getElementById(`persona-select`),d=null,f=0,p=null,m=!1,h=`tr`,g=`standart`;function _(){let e=t[h]||t.tr;document.querySelectorAll(`[data-i18n]`).forEach(t=>{let n=t.getAttribute(`data-i18n`);e[n]&&(t.textContent=e[n])})}function v(){let e=localStorage.getItem(`aiSef_savedRecipes`);return e?JSON.parse(e):[]}function y(e){let t=v();t.some(t=>t.title===e.title)||(e.id||=Date.now(),t.push(e),localStorage.setItem(`aiSef_savedRecipes`,JSON.stringify(t)))}function b(e){let t=v();t=t.filter(t=>t.title!==e),localStorage.setItem(`aiSef_savedRecipes`,JSON.stringify(t))}function x(e){return v().some(t=>t.title===e)}function S(){w(),T(),E(),k()}function C(e){let t=document.createElement(`div`);t.className=`recipe-card`;let n=``;return(e.calories||e.time)&&(n=`
+      <div class="card-mini-badges">
+        ${e.calories?`<span>${e.calories.split(` `)[0]} ${e.calories.split(` `)[1]}</span>`:``}
+        ${e.time?`<span>${e.time}</span>`:``}
+      </div>
+    `),t.innerHTML=`
+    <div class="icon">${e.icon||`🍽️`}</div>
+    <div class="info">
+      <h4>${e.title}</h4>
+      <p>${e.desc||`Yapay Zeka Tarifi`}</p>
+      ${n}
+    </div>
+    <div class="card-action">
+      <span class="action-icon">→</span>
+    </div>
+  `,t.addEventListener(`click`,()=>M(e)),t}function w(){i&&(i.innerHTML=``,e.forEach(e=>{i.appendChild(C(e))}))}function T(){if(!a||!o)return;let e=v();e.length>0?(a.classList.remove(`hidden`),o.innerHTML=``,[...e].reverse().forEach(e=>{o.appendChild(C(e))})):a.classList.add(`hidden`)}function E(){s&&s.addEventListener(`click`,O),c&&c.addEventListener(`keypress`,function(e){e.key===`Enter`&&O()}),l&&l.addEventListener(`change`,e=>{h=e.target.value,_()}),u&&u.addEventListener(`change`,e=>{g=e.target.value})}async function D(e){try{let t=await fetch(`/api/generateRecipe`,{method:`POST`,headers:{"Content-Type":`application/json`},body:JSON.stringify({ingredients:e,language:h,persona:g})});if(!t.ok){let e=await t.json(),n=e.error?e.error.message||e.error:`Bilinmeyen bir API hatası`;throw Error(`Sunucu Hatası (${t.status}): ${n}`)}let n=(await t.json()).candidates[0].content.parts[0].text.trim();console.log(`AI'dan gelen ham cevap:`,n);let r=n.match(/\{[\s\S]*\}/);if(!r)throw Error(`Yapay zeka geçerli bir format döndüremedi. Lütfen tekrar deneyin.`);return JSON.parse(r[0])}catch(e){throw console.error(`Hata Detayı:`,e),Error(e.message||`Tarif oluşturulurken bir hata oluştu.`)}}async function O(){let e=c.value.trim();if(!e){alert(`Lütfen dolabındaki malzemeleri yaz! (Örn: Domates, yumurta)`);return}let t=s.innerHTML;s.innerHTML=`Düşünüyor... 🤔`,s.disabled=!0;try{M(await D(e))}catch(e){alert(e.message)}finally{s.innerHTML=t,s.disabled=!1}}function k(){let e=window.SpeechRecognition||window.webkitSpeechRecognition;e?(p=new e,p.lang=`tr-TR`,p.continuous=!0,p.interimResults=!1,p.onresult=function(e){let t=e.results.length-1,n=e.results[t][0].transcript.toLowerCase().trim();if(console.log(`Sesli komut algılandı:`,n),n.includes(`sonraki`)||n.includes(`ileri`)||n.includes(`devam`)){let e=document.getElementById(`next-btn`);e&&!e.innerText.includes(`Afiyet`)?I(1):e&&e.innerText.includes(`Afiyet`)&&N()}else if(n.includes(`önceki`)||n.includes(`geri`)){let e=document.getElementById(`prev-btn`);e&&!e.disabled&&I(-1)}},p.onerror=function(e){console.error(`Speech Recognition Hata:`,e.error)}):console.warn(`Tarayıcınız SpeechRecognition API'sini desteklemiyor.`)}function A(){m=!m;let e=document.getElementById(`read-aloud-btn`);e&&(e.innerHTML=m?`🔇 Asistanı Sustur`:`🔊 Bana Oku`,e.classList.toggle(`active`,m)),m?j():window.speechSynthesis.cancel()}function j(){if(!m||!d)return;window.speechSynthesis.cancel();let e=d.steps[f],t=new SpeechSynthesisUtterance(e);t.lang=`tr-TR`,t.rate=1,t.pitch=1.1,window.speechSynthesis.speak(t)}function M(e){if(d=e,f=0,m=!1,n.classList.add(`hidden`),r.classList.remove(`hidden`),F(),p)try{p.start()}catch{console.log(`Recognition zaten çalışıyor veya başlatılamadı.`)}}function N(){n.classList.remove(`hidden`),r.classList.add(`hidden`),d=null,T(),p&&p.stop(),window.speechSynthesis.cancel(),m=!1}function P(){if(!d)return;x(d.title)?b(d.title):y(d);let e=document.getElementById(`save-btn`);if(e){let t=x(d.title);e.innerHTML=t?`🔖`:`📑`,e.title=t?`Kaydedilenlerden Çıkar`:`Tarifi Kaydet`,e.classList.toggle(`active`,t)}}function F(){let e=d.steps.length,t=f===e-1,n=f===0,i=x(d.title),a=p?`<div class="mic-badge listening" title="Sesli Komut Açık">🎙️ Dinliyor</div>`:``,o=`
+    <div class="recipe-badges">
+      ${d.calories?`<span class="badge badge-calories">${d.calories}</span>`:``}
+      ${d.time?`<span class="badge badge-time">${d.time}</span>`:``}
+      ${d.cost?`<span class="badge badge-cost">${d.cost}</span>`:``}
+    </div>
+  `;r.innerHTML=`
+    <div class="recipe-header">
+      <button class="back-btn" id="back-btn">←</button>
+      <h2>${d.icon||`🍽️`} ${d.title}</h2>
+      <button class="save-btn ${i?`active`:``}" id="save-btn" title="${i?`Kaydedilenlerden Çıkar`:`Tarifi Kaydet`}">
+        ${i?`🔖`:`📑`}
+      </button>
+    </div>
+    
+    ${d.calories||d.time||d.cost?o:``}
+    
+    <div class="step-container">
+      <div class="step-badge">Adım ${f+1} / ${e}</div>
+      ${a}
+      
+      <button class="read-aloud-btn ${m?`active`:``}" id="read-aloud-btn">
+        ${m?`🔇 Asistanı Sustur`:`🔊 Bana Oku`}
+      </button>
+
+      <div class="step-content" id="step-content">
+        ${d.steps[f]}
+      </div>
+    </div>
+    
+    <div class="step-controls">
+      <button class="control-btn prev-btn" id="prev-btn" ${n?`disabled`:``}>Önceki</button>
+      <button class="control-btn next-btn" id="next-btn">${t?`Afiyet Olsun! 🎉`:`Sonraki Adım`}</button>
+    </div>
+  `,document.getElementById(`back-btn`).addEventListener(`click`,N),document.getElementById(`save-btn`).addEventListener(`click`,P),document.getElementById(`read-aloud-btn`).addEventListener(`click`,A),document.getElementById(`prev-btn`).addEventListener(`click`,()=>I(-1)),document.getElementById(`next-btn`).addEventListener(`click`,()=>{t?N():I(1)})}function I(e){f+=e;let t=document.getElementById(`step-content`);t&&(t.style.animation=`none`,t.offsetHeight,t.style.animation=null),F(),m&&j()}S();

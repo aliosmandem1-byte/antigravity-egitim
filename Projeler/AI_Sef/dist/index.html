@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Şef - En Kolay Yemek Rehberi</title>
+    <title>KitchAI - Akıllı Mutfak Asistanın</title>
     <!-- Modern Typography: Outfit & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="/assets/index-BVMtHO01.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-DAhX6Qc7.css">
+    <script type="module" crossorigin src="/assets/index-C0n2ol8J.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-OZ6kGMSQ.css">
   </head>
   <body>
     <div id="app">
@@ -19,36 +19,52 @@
         
         <!-- Üst Başlık (Header) -->
         <header class="header">
-          <div class="logo">
-            <span class="emoji">🍳</span>
-            <h1>AI Şef</h1>
+          <div class="logo-area">
+            <div class="logo">
+              <span class="emoji">🍳</span>
+              <h1>KitchAI</h1>
+            </div>
+            <p class="subtitle" data-i18n="headerSubtitle">Yemek yapmayı bilmeyenler için aşırı basit rehber</p>
           </div>
-          <p class="subtitle">Yemek yapmayı bilmeyenler için aşırı basit rehber</p>
+          <div class="header-controls">
+            <select id="persona-select" class="glass-dropdown">
+              <option value="standart" data-i18n="chefStandart">👨‍🍳 Standart Şef</option>
+              <option value="angry" data-i18n="chefAngry">🤬 Sinirli Şef (Ramsay)</option>
+              <option value="mom" data-i18n="chefMom">👵 Sevecen Anne</option>
+              <option value="student" data-i18n="chefStudent">🎓 Üşengeç Öğrenci</option>
+            </select>
+            <select id="language-select" class="glass-dropdown">
+              <option value="tr">🇹🇷 TR</option>
+              <option value="en">🇬🇧 EN</option>
+              <option value="de">🇩🇪 DE</option>
+              <option value="es">🇪🇸 ES</option>
+            </select>
+          </div>
         </header>
 
         <!-- Karşılama ve Arama Bölümü -->
         <main class="main-content" id="home-view">
           <div class="hero-section">
-            <h2>Bugün ne pişirelim?</h2>
-            <p>Dolaptaki malzemelerini yaz veya önerdiğimiz garanti tariflerden birini seç.</p>
+            <h2 data-i18n="heroTitle">Bugün ne pişirelim?</h2>
+            <p data-i18n="heroSubtitle">Dolaptaki malzemelerini yaz veya önerdiğimiz garanti tariflerden birini seç.</p>
             
             <div class="search-box">
               <input type="text" id="ingredient-input" placeholder="Örn: Tavuk, domates, makarna..." autocomplete="off" />
               <button id="ai-generate-btn" class="primary-btn">
-                <span class="magic-icon">✨</span> AI ile Tarif Bul
+                <span class="magic-icon">✨</span> <span data-i18n="generateBtn">AI ile Tarif Bul</span>
               </button>
             </div>
           </div>
 
           <div class="saved-recipes hidden" id="saved-recipes-section">
-            <h3>🔖 Kaydettiğin Tarifler</h3>
+            <h3 data-i18n="savedRecipesTitle">🔖 Kaydettiğin Tarifler</h3>
             <div class="recipe-cards" id="saved-recipe-cards">
               <!-- JS ile doldurulacak -->
             </div>
           </div>
 
           <div class="quick-recipes">
-            <h3>Asla Hata Yapmayacağın 3 Tarif</h3>
+            <h3 data-i18n="quickRecipesTitle">Asla Hata Yapmayacağın 3 Tarif</h3>
             <div class="recipe-cards" id="quick-recipe-cards">
               <!-- JS ile doldurulacak -->
             </div>
