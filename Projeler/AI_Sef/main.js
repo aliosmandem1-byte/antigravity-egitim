@@ -40,6 +40,7 @@ const fallbackRecipes = [
 // --- Sözlük (i18n) ---
 const translations = {
   tr: {
+    headerSubtitle: "Yemek yapmayı bilmeyenler için aşırı basit rehber",
     heroTitle: "Bugün ne pişirelim?",
     heroSubtitle: "Dolaptaki malzemelerini yaz veya önerdiğimiz garanti tariflerden birini seç.",
     generateBtn: "AI ile Tarif Bul",
@@ -56,6 +57,7 @@ const translations = {
     emptyInputAlert: "Lütfen dolabındaki malzemeleri yaz! (Örn: Domates, yumurta)"
   },
   en: {
+    headerSubtitle: "Extremely simple guide for those who don't know how to cook",
     heroTitle: "What should we cook today?",
     heroSubtitle: "Write your ingredients in the fridge or choose from our guaranteed recipes.",
     generateBtn: "Find Recipe with AI",
@@ -72,6 +74,7 @@ const translations = {
     emptyInputAlert: "Please write your ingredients! (Ex: Tomato, eggs)"
   },
   de: {
+    headerSubtitle: "Extrem einfache Anleitung für diejenigen, die nicht kochen können",
     heroTitle: "Was kochen wir heute?",
     heroSubtitle: "Schreiben Sie Ihre Zutaten auf oder wählen Sie ein garantiertes Rezept.",
     generateBtn: "Rezept mit KI finden",
@@ -88,6 +91,7 @@ const translations = {
     emptyInputAlert: "Bitte schreibe deine Zutaten! (Bsp: Tomate, Eier)"
   },
   es: {
+    headerSubtitle: "Guía extremadamente simple para aquellos que no saben cocinar",
     heroTitle: "¿Qué cocinamos hoy?",
     heroSubtitle: "Escribe tus ingredientes o elige una receta garantizada.",
     generateBtn: "Buscar receta con IA",
