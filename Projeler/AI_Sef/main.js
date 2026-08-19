@@ -343,9 +343,28 @@ function readCurrentStep() {
 
   const textToRead = currentRecipe.steps[currentStepIndex];
   const utterance = new SpeechSynthesisUtterance(textToRead);
-  utterance.lang = 'tr-TR';
-  utterance.rate = 1.0; // Okuma hızı (normal)
-  utterance.pitch = 1.1; // Ses tonu
+  
+  // Dil ayarını mevcut UI diline göre yap (Aksanı ayarlar)
+  if (currentLang === 'en') utterance.lang = 'en-US';
+  else if (currentLang === 'de') utterance.lang = 'de-DE';
+  else if (currentLang === 'es') utterance.lang = 'es-ES';
+  else utterance.lang = 'tr-TR';
+  
+  // Şef moduna göre ses tonu ve hız ayarı
+  if (currentPersona === 'angry') {
+    utterance.rate = 1.25; // Hızlı, agresif
+    utterance.pitch = 0.7; // Kalın ses (Ramsay)
+  } else if (currentPersona === 'mom') {
+    utterance.rate = 0.9;  // Yavaş, tane tane
+    utterance.pitch = 1.4; // İnce, sevecen ses
+  } else if (currentPersona === 'student') {
+    utterance.rate = 1.15; // Hızlı, aceleci
+    utterance.pitch = 1.1; // Hafif heyecanlı/genç
+  } else {
+    // Standart Şef
+    utterance.rate = 1.0; 
+    utterance.pitch = 1.0; 
+  }
   
   window.speechSynthesis.speak(utterance);
 }
