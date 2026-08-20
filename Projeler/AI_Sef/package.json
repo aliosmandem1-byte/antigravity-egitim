@@ -10,11 +10,18 @@
     "start": "node server.js"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^8.5.0",
     "@octokit/rest": "^22.0.1",
     "glob": "^13.0.6"
   },
   "dependencies": {
+    "@capacitor-community/admob": "^8.1.0",
+    "@capacitor-community/text-to-speech": "^8.0.2",
+    "@capacitor/android": "^8.5.0",
+    "@capacitor/core": "^8.5.0",
     "@google/generative-ai": "^0.24.1",
+    "@revenuecat/purchases-capacitor": "^13.4.1",
     "@supabase/supabase-js": "^2.112.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",

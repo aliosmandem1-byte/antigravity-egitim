@@ -103,22 +103,20 @@ app.post('/api/generateRecipe', recipeLimiter, async (req, res) => {
       personaPrompt = "Sen parasız, üşengeç ve sürekli pratik taktikler arayan bir üniversite öğrencisisin. Tariflerin aşırı pratik, bulaşık çıkarmayan ve ucuza kaçan türden olsun.";
     }
 
-    // Dile göre para birimi ve dil ayarı
-    let langInstruction = "Tüm cevabını KESİNLİKLE Türkçe (TR) olarak ver. Fiyat hesaplamasını Türkiye (TL - ₺) şartlarına göre yap.";
+    // Dile göre dil ayarı
+    let langInstruction = "Tüm cevabını KESİNLİKLE Türkçe (TR) olarak ver.";
     if (language === 'en') {
-      langInstruction = "Give your ENTIRE response STRICTLY in English (EN). Calculate the estimated cost using US Dollars ($) based on US market prices.";
+      langInstruction = "Give your ENTIRE response STRICTLY in English (EN).";
     } else if (language === 'de') {
-      langInstruction = "Gib deine GESAMTE Antwort AUSSCHLIESSLICH auf Deutsch (DE) ab. Berechne die geschätzten Kosten in Euro (€) basierend auf den Preisen auf dem deutschen Markt.";
+      langInstruction = "Gib deine GESAMTE Antwort AUSSCHLIESSLICH auf Deutsch (DE) ab.";
     } else if (language === 'es') {
-      langInstruction = "Da TODA tu respuesta ESTRICTAMENTE en Español (ES). Calcula el costo estimado usando Euros (€) o Dólares ($) según precios promedio.";
+      langInstruction = "Da TODA tu respuesta ESTRICTAMENTE en Español (ES).";
     }
 
     const prompt = `${personaPrompt}
 Kullanıcının elindeki malzemeler veya istediği tarif: "${ingredients}". 
 Kullanıcı bir malzeme listesi verdiyse ona göre, doğrudan bir tarif adı verdiyse o tarife göre AŞIRI BASİT bir yemek tarifi oluştur. Eğer kullanıcı birbiriyle uyumsuz veya saçma malzemeler verdiyse bile bunu yenebilir ve mantıklı bir hale getirerek tarifleştir. Gram/mililitre kullanma; 'su bardağı', 'tatlı kaşığı', 'göz kararı' gibi şeyler kullan.
-Ayrıca, yemeğin kalorisini, hazırlanma süresini ve tahmini maliyetini de hesapla.
-DİKKAT MALİYET HESABI: Maliyeti hesaplarken malzemelerin sadece tarifte kullanılan kadarının (gram/porsiyon) maliyetini DEĞİL, marketten SATIN ALINMA (bütün/paket/kilo) fiyatını baz al. Örneğin, tarifte 2 yaprak marul kullanılacak olsa bile kullanıcının marketten 1 tam marul alması gerektiğini düşünerek tam marul fiyatını hesaba kat. Fiyatlandırmayı güncel piyasa koşullarına göre mantıklı bir şekilde yap.
-Maliyet sonucunu genel kitleye hitap eden kelimelerle (Örn: Türkçe için "Çok Ekonomik", İngilizce için "Very Cheap") ve yanına tahmini fiyat aralığını yazarak belirt.
+Ayrıca, yemeğin kalorisini ve hazırlanma süresini de hesapla.
 
 ${langInstruction}
 
@@ -129,7 +127,6 @@ DİKKAT: Çıktı sadece ve sadece aşağıdaki formatta saf JSON olmalı, baş�
   "desc": "Ana Malzemeler: Tavuk, Tuz, Domates...",
   "calories": "🔥 350 kcal",
   "time": "⏳ 15 Dk",
-  "cost": "🤑 Çok Ekonomik (30-50 ₺)",
   "steps": ["Adım 1: ...", "Adım 2: ...", "Adım 3: ..."]
 }`;
 

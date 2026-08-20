@@ -69,9 +69,12 @@ body {
   margin-bottom: 8px;
 }
 
-.emoji {
-  font-size: 2.5rem;
+.app-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
   animation: bounce 2s infinite ease-in-out;
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
 }
 
 @keyframes bounce {
@@ -466,6 +469,7 @@ input[type="text"]:focus, input[type="password"]:focus {
 }
 .recipe-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 16px;
   margin-bottom: 30px;
@@ -528,6 +532,7 @@ input[type="text"]:focus, input[type="password"]:focus {
   transition: all 0.2s;
   font-size: 1rem;
   font-family: var(--font-heading);
+  flex-shrink: 0;
 }
 
 .save-btn:hover {
@@ -831,3 +836,214 @@ input[type="text"]:focus, input[type="password"]:focus {
   background: #1a1a2e;
   color: #fff;
 }
+
+/* Onboarding Animation */
+.onboarding-animation {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.onboard-step {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 12px;
+  gap: 10px;
+  opacity: 0.4;
+  transform: scale(0.98);
+  transition: all 0.4s ease;
+}
+
+.onboard-step.active {
+  opacity: 1;
+  transform: scale(1);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.onboard-icon {
+  font-size: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  width: 40px; height: 40px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+}
+
+.onboard-text {
+  flex: 1;
+  min-width: 140px;
+}
+
+.onboard-text b {
+  display: block;
+  font-size: 0.95rem;
+  color: #fff;
+  white-space: normal;
+}
+
+.onboard-text p {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.onboard-visual {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  padding-left: 50px;
+  margin-top: -2px;
+}
+
+/* Visual elements */
+.fake-input, .fake-select, .fake-recipe {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 0.7rem;
+  padding: 4px 8px;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.fake-input {
+  width: max-content;
+  max-width: 0;
+  opacity: 0;
+}
+
+.active .fake-input {
+  animation: typeText 1.5s forwards 0.2s;
+}
+
+@keyframes typeText {
+  0% { max-width: 0; opacity: 1; }
+  100% { max-width: 250px; opacity: 1; }
+}
+
+.cursor {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+.fake-select {
+  opacity: 0;
+  transform: translateY(-5px);
+}
+
+.active .fake-select {
+  animation: dropIn 0.5s forwards 0.2s;
+}
+
+@keyframes dropIn { to { opacity: 1; transform: translateY(0); } }
+
+.fake-recipe {
+  display: flex; gap: 8px; align-items: center; padding: 6px; width: 80px; opacity: 0;
+}
+
+.active .fake-recipe {
+  animation: fadeIn 0.5s forwards 0.2s;
+}
+
+.fake-audio {
+  position: relative; width: 24px; height: 24px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem;
+}
+
+.active .fake-audio .wave {
+  position: absolute; inset: -2px; border-radius: 50%; border: 1px solid #ff8c00; animation: pulse 1s infinite;
+}
+
+.fake-lines { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.line { height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 2px; }
+.w-full { width: 100%; } .w-3-4 { width: 75%; } .w-1-2 { width: 50%; }
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+@keyframes fadeIn { to { opacity: 1; } }
+
+/* =========================================
+   MOBİL UYUMLULUK (RESPONSIVE DESIGN)
+   ========================================= */
+@media (max-width: 600px) {
+  body {
+    padding: 10px;
+    align-items: flex-start;
+  }
+  
+  .glass-container {
+    padding: 24px 16px;
+    border-radius: 16px;
+    width: 100%;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+  
+  .app-logo {
+    width: 44px;
+    height: 44px;
+  }
+
+  .header-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  
+  .persona-wrapper {
+    flex: 1;
+    min-width: 150px;
+  }
+  
+  .glass-dropdown {
+    width: 100%;
+    font-size: 0.85rem;
+    padding: 0.5rem;
+  }
+
+  .guide-btn {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.8rem;
+    flex-shrink: 0;
+  }
+
+  .hero-section h2 {
+    font-size: 1.5rem;
+  }
+  
+  .hero-section p {
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+  }
+  
+  input[type="text"], input[type="password"] {
+    padding: 12px 16px;
+    font-size: 0.95rem;
+  }
+  
+  .primary-btn {
+    font-size: 1rem;
+    padding: 14px 16px;
+  }
+  
+  .modal-content {
+    width: 95%;
+    padding: 20px;
+    margin: 20px auto;
+  }
+}
+

@@ -1,4 +1,8 @@
 import './style.css';
+import { Capacitor } from '@capacitor/core';
+import { AdMob, BannerAdSize, BannerAdPosition } from '@capacitor-community/admob';
+import { TextToSpeech } from '@capacitor-community/text-to-speech';
+import { Purchases } from '@revenuecat/purchases-capacitor';
 
 // --- Sahte Veri (Mock Data) ---
 // Not: Railway tetiklemesi için boş commit
@@ -10,7 +14,6 @@ const fallbackRecipes = [
     desc: "Ana Malzemeler: Lavaş, Kaşar Peyniri, Sucuk, Salça.",
     calories: "🔥 450 kcal",
     time: "⏳ 10 Dk",
-    cost: "💰 Ortalama Maliyet (40-60 ₺)",
     steps: [
       "Geniş bir tavaya 1 adet lavaş ekmeğini koy (altını henüz yakma).",
       "1 yemek kaşığı salçayı biraz su ve kekik ile karıştırıp lavaşın üzerine sür.",
@@ -26,7 +29,6 @@ const fallbackRecipes = [
     desc: "Ana Malzemeler: Un, Şeker, Kakao, Süt, Sıvı Yağ.",
     calories: "🔥 320 kcal",
     time: "⏳ 5 Dk",
-    cost: "🤑 Çok Ekonomik (15-20 ₺)",
     steps: [
       "Büyük bir kupa fincanın içine 3 yemek kaşığı un, 2 yemek kaşığı şeker ve 1 yemek kaşığı kakao koyup karıştır.",
       "Üzerine 3 yemek kaşığı süt ve 2 yemek kaşığı sıvı yağ ekle. Pürüzsüz olana kadar çatal ile iyice çırp.",
@@ -47,8 +49,8 @@ const translations = {
     savedRecipesTitle: "🔖 Kaydettiğin Tarifler",
     quickRecipesTitle: "Asla Hata Yapmayacağın 3 Tarif",
     chefStandart: "👨‍🍳 Standart Şef",
-    chefAngry: "🤬 Sinirli Şef (Ramsay)",
-    chefMom: "👵 Sevecen Anne",
+    chefAngry: "🔒 🤬 Sinirli Şef (Ramsay)",
+    chefMom: "🔒 👵 Sevecen Anne",
     chefStudent: "🎓 Üşengeç Öğrenci",
     saveBtnText: "Tarifi Kaydet",
     savedBtnText: "Kaydedildi",
@@ -58,16 +60,14 @@ const translations = {
     inputHint: "💡 İpucu: İster elindeki malzemeleri yaz, istersen doğrudan 'Sezar Salata' gibi istediğin bir tarifin adını yaz!",
     guideBtn: "📖 Nasıl Kullanılır?",
     guideTitle: "📖 KitchAI Nasıl Kullanılır?",
-    guideStep1Title: "Tarif Arama:",
-    guideStep1Desc: "Elindeki malzemeleri veya istediğin yemek adını yaz. Büyülü butona bas!",
-    guideStep2Title: "Şef Seçimi:",
-    guideStep2Desc: "Farklı tarzlarda (Ramsay, Anne vb.) tarif ve sesler almak için şef tipini değiştir.",
-    guideStep3Title: "Sesli Asistan:",
-    guideStep3Desc: "Tarif ekranında 'Bana Oku' butonuna basarak şefin tarifi sesli anlatmasını sağla.",
-    guideStep4Title: "Sesli Komut:",
-    guideStep4Desc: "Asistan konuşurken 'Sonraki', 'İleri' diyerek bir sonraki; 'Önceki', 'Geri' diyerek önceki adıma geç.",
-    guideStep5Title: "Kaydetme:",
-    guideStep5Desc: "Beğendiğin tarifleri kaydetmek için tarif ekranındaki 'Tarifi Kaydet' butonuna bas."
+    guideStep1Title: "1. Malzemelerini Yaz",
+    guideStep1Desc: "Dolabındaki malzemeleri kutuya gir.",
+    guideStep2Title: "2. Şefini Seç",
+    guideStep2Desc: "Farklı karakterlerde şefler seç.",
+    guideStep3Title: "3. Dinle ve Pişir",
+    guideStep3Desc: "AI tarifi anlatsın, sen pişir!",
+    guideFakeInput: "Tavuk, Krema, Mantar",
+    guideFakeSelect: "🤬 Sinirli Şef (Ramsay)"
   },
   en: {
     headerSubtitle: "Extremely simple guide for those who don't know how to cook",
@@ -77,8 +77,8 @@ const translations = {
     savedRecipesTitle: "🔖 Saved Recipes",
     quickRecipesTitle: "3 Foolproof Recipes",
     chefStandart: "👨‍🍳 Standard Chef",
-    chefAngry: "🤬 Angry Chef (Ramsay)",
-    chefMom: "👵 Loving Mom",
+    chefAngry: "🔒 🤬 Angry Chef (Ramsay)",
+    chefMom: "🔒 👵 Loving Mom",
     chefStudent: "🎓 Lazy Student",
     saveBtnText: "Save Recipe",
     savedBtnText: "Saved",
@@ -88,16 +88,14 @@ const translations = {
     inputHint: "💡 Hint: You can write your available ingredients, or directly ask for a specific recipe like 'Caesar Salad'!",
     guideBtn: "📖 How to Use?",
     guideTitle: "📖 How to Use KitchAI?",
-    guideStep1Title: "Recipe Search:",
-    guideStep1Desc: "Write your ingredients or desired dish name. Click the magic button!",
-    guideStep2Title: "Chef Selection:",
-    guideStep2Desc: "Change the chef persona (Ramsay, Mom, etc.) to get different styles and voices.",
-    guideStep3Title: "Voice Assistant:",
-    guideStep3Desc: "Click 'Read to Me' on the recipe screen to have the chef narrate the recipe.",
-    guideStep4Title: "Voice Commands:",
-    guideStep4Desc: "While the assistant is speaking, say 'Next' or 'Forward' to go to the next step, or 'Previous' or 'Back' to go back.",
-    guideStep5Title: "Saving:",
-    guideStep5Desc: "Click the 'Save Recipe' button to bookmark your favorite recipes."
+    guideStep1Title: "1. Write Ingredients",
+    guideStep1Desc: "Enter your fridge ingredients.",
+    guideStep2Title: "2. Choose a Chef",
+    guideStep2Desc: "Select different chef personas.",
+    guideStep3Title: "3. Listen & Cook",
+    guideStep3Desc: "Let AI narrate, you cook!",
+    guideFakeInput: "Chicken, Cream, Mushroom",
+    guideFakeSelect: "🤬 Angry Chef (Ramsay)"
   },
   de: {
     headerSubtitle: "Extrem einfache Anleitung für diejenigen, die nicht kochen können",
@@ -107,8 +105,8 @@ const translations = {
     savedRecipesTitle: "🔖 Gespeicherte Rezepte",
     quickRecipesTitle: "3 Todsichere Rezepte",
     chefStandart: "👨‍🍳 Standardkoch",
-    chefAngry: "🤬 Wütender Koch",
-    chefMom: "👵 Liebevolle Mutter",
+    chefAngry: "🔒 🤬 Wütender Koch",
+    chefMom: "🔒 👵 Liebevolle Mutter",
     chefStudent: "🎓 Fauler Student",
     saveBtnText: "Rezept Speichern",
     savedBtnText: "Gespeichert",
@@ -118,16 +116,14 @@ const translations = {
     inputHint: "💡 Tipp: Gib deine Zutaten ein oder frage direkt nach einem Rezept wie 'Caesar Salat'!",
     guideBtn: "📖 Wie benutzt man es?",
     guideTitle: "📖 Wie man KitchAI benutzt?",
-    guideStep1Title: "Rezeptsuche:",
-    guideStep1Desc: "Schreibe deine Zutaten oder das gewünschte Gericht. Klicke auf den magischen Button!",
-    guideStep2Title: "Kochauswahl:",
-    guideStep2Desc: "Ändere den Koch (Ramsay, Mutter usw.), um verschiedene Stile und Stimmen zu erhalten.",
-    guideStep3Title: "Sprachassistent:",
-    guideStep3Desc: "Klicke auf dem Rezeptbildschirm auf 'Mir vorlesen', um das Rezept vom Koch erzählen zu lassen.",
-    guideStep4Title: "Sprachbefehle:",
-    guideStep4Desc: "Während der Assistent spricht, sage 'Weiter' oder 'Vorwärts', um zum nächsten Schritt zu gelangen, oder 'Zurück'.",
-    guideStep5Title: "Speichern:",
-    guideStep5Desc: "Klicke auf 'Rezept speichern', um deine Lieblingsrezepte zu markieren."
+    guideStep1Title: "1. Zutaten eingeben",
+    guideStep1Desc: "Gib deine Zutaten aus dem Kühlschrank ein.",
+    guideStep2Title: "2. Koch auswählen",
+    guideStep2Desc: "Wähle verschiedene Köche.",
+    guideStep3Title: "3. Hören & Kochen",
+    guideStep3Desc: "Lass die KI erzählen, du kochst!",
+    guideFakeInput: "Hähnchen, Sahne, Pilze",
+    guideFakeSelect: "🤬 Wütender Koch"
   },
   es: {
     headerSubtitle: "Guía extremadamente simple para aquellos que no saben cocinar",
@@ -137,8 +133,8 @@ const translations = {
     savedRecipesTitle: "🔖 Recetas guardadas",
     quickRecipesTitle: "3 Recetas Infalibles",
     chefStandart: "👨‍🍳 Chef Estándar",
-    chefAngry: "🤬 Chef Enojado",
-    chefMom: "👵 Mamá Amorosa",
+    chefAngry: "🔒 🤬 Chef Enojado",
+    chefMom: "🔒 👵 Mamá Amorosa",
     chefStudent: "🎓 Estudiante Perezoso",
     saveBtnText: "Guardar Receta",
     savedBtnText: "Guardado",
@@ -148,16 +144,14 @@ const translations = {
     inputHint: "💡 Consejo: ¡Escribe tus ingredientes disponibles o pide directamente una receta como 'Ensalada César'!",
     guideBtn: "📖 ¿Cómo usar?",
     guideTitle: "📖 ¿Cómo usar KitchAI?",
-    guideStep1Title: "Buscar receta:",
-    guideStep1Desc: "Escribe tus ingredientes o el nombre del plato. ¡Haz clic en el botón mágico!",
-    guideStep2Title: "Elegir chef:",
-    guideStep2Desc: "Cambia el estilo del chef (Ramsay, Mamá, etc.) para obtener diferentes voces y tonos.",
-    guideStep3Title: "Asistente de voz:",
-    guideStep3Desc: "Haz clic en 'Léemelo' en la pantalla de la receta para que el chef narre.",
-    guideStep4Title: "Comandos de voz:",
-    guideStep4Desc: "Mientras el asistente habla, di 'Siguiente' o 'Adelante' para avanzar, o 'Anterior' o 'Atrás' para retroceder.",
-    guideStep5Title: "Guardar:",
-    guideStep5Desc: "Haz clic en 'Guardar receta' para marcar tus recetas favoritas."
+    guideStep1Title: "1. Escribe ingredientes",
+    guideStep1Desc: "Ingresa tus ingredientes.",
+    guideStep2Title: "2. Elige un chef",
+    guideStep2Desc: "Selecciona diferentes chefs.",
+    guideStep3Title: "3. Escucha y cocina",
+    guideStep3Desc: "¡Deja que la IA narre y cocina!",
+    guideFakeInput: "Pollo, Crema, Champiñones",
+    guideFakeSelect: "🤬 Chef Enojado"
   }
 };
 
@@ -179,6 +173,7 @@ let recognition = null;
 let isReadAloudActive = false;
 let currentLang = 'tr';
 let currentPersona = 'standart';
+let currentPackage = null;
 
 // --- i18n Dil Fonksiyonu ---
 function updateLanguage() {
@@ -258,12 +253,144 @@ function isRecipeSaved(title) {
   return savedRecipes.some(r => r.title === title);
 }
 
-// --- Başlangıç Yüklemesi ---
 function init() {
   renderSavedRecipes();
   setupEventListeners();
   initSpeechRecognition();
   updateLanguage();
+  initRevenueCat();
+  initAdMob();
+}
+
+async function initRevenueCat() {
+  if (Capacitor.getPlatform() !== 'web') {
+    try {
+      await Purchases.setLogLevel({ level: "DEBUG" });
+      await Purchases.configure({ apiKey: "goog_dwyCthmqBrPJhOfjYvCRdhswapg" });
+      
+      const customerInfo = await Purchases.getCustomerInfo();
+      // If the user has an active premium entitlement
+      if (typeof customerInfo.customerInfo.entitlements.active['premium'] !== "undefined") {
+        localStorage.setItem('aiSef_isPremium', 'true');
+      } else {
+        localStorage.setItem('aiSef_isPremium', 'false');
+      }
+    } catch(err) {
+      console.log("RevenueCat init error", err);
+    }
+  }
+}
+
+async function initAdMob() {
+  if (Capacitor.getPlatform() !== 'web') {
+    let isPremium = localStorage.getItem('aiSef_isPremium') === 'true';
+    if (!isPremium) {
+      try {
+        await AdMob.initialize({
+          requestTrackingAuthorization: true,
+          initializeForTesting: false,
+        });
+        
+        await AdMob.showBanner({
+          adId: 'ca-app-pub-3851914478319541/2960966529', // Real Banner
+          adSize: BannerAdSize.BANNER,
+          position: BannerAdPosition.BOTTOM_CENTER,
+          margin: 0,
+          isTesting: false
+        });
+      } catch (err) {
+        console.log('AdMob initialization error:', err);
+      }
+    }
+  } else {
+    console.log('AdMob is skipped on web platform.');
+  }
+}
+
+// --- Freemium Mantığı ---
+const MAX_FREE_RECIPES = 3;
+
+async function showPremiumModal() {
+  const modal = document.getElementById('premium-modal');
+  const priceText = document.getElementById('premium-price-text');
+  if(modal) modal.classList.remove('hidden');
+  
+  if (Capacitor.getPlatform() !== 'web') {
+    try {
+      const offerings = await Purchases.getOfferings();
+      if (offerings.current !== null && offerings.current.availablePackages.length !== 0) {
+        currentPackage = offerings.current.availablePackages[0];
+        if(priceText) {
+          priceText.innerText = `Premium Ol (${currentPackage.product.priceString})`;
+        }
+      }
+    } catch(err) {
+      console.log("Error fetching offerings", err);
+    }
+  }
+}
+
+function checkQuota() {
+  let isPremium = localStorage.getItem('aiSef_isPremium') === 'true';
+  if (isPremium) return true;
+
+  const today = new Date().toISOString().split('T')[0];
+  let usage = JSON.parse(localStorage.getItem('aiSef_usage') || '{}');
+  
+  if (usage.date !== today) {
+    usage = { date: today, count: 0 };
+  }
+
+  if (usage.count >= MAX_FREE_RECIPES) {
+    showPremiumModal();
+    return false;
+  }
+  return true;
+}
+
+function incrementQuota() {
+  let isPremium = localStorage.getItem('aiSef_isPremium') === 'true';
+  if (isPremium) return;
+
+  const today = new Date().toISOString().split('T')[0];
+  let usage = JSON.parse(localStorage.getItem('aiSef_usage') || '{}');
+  if (usage.date !== today) {
+    usage = { date: today, count: 0 };
+  }
+  usage.count++;
+  localStorage.setItem('aiSef_usage', JSON.stringify(usage));
+}
+
+function checkPersonaPremium() {
+  let isPremium = localStorage.getItem('aiSef_isPremium') === 'true';
+  if (isPremium) return true;
+
+  if (currentPersona === 'angry' || currentPersona === 'mom') {
+    showPremiumModal();
+    // Geri al
+    currentPersona = 'standart';
+    const personaSelect = document.getElementById('persona-select');
+    if (personaSelect) personaSelect.value = 'standart';
+    updateLanguage();
+    return false;
+  }
+  return true;
+}
+
+async function showInterstitialAd() {
+  if (Capacitor.getPlatform() !== 'web') {
+    let isPremium = localStorage.getItem('aiSef_isPremium') === 'true';
+    if (isPremium) return;
+    try {
+      await AdMob.prepareInterstitial({
+        adId: 'ca-app-pub-3851914478319541/5395558170', // Real Interstitial
+        isTesting: false
+      });
+      await AdMob.showInterstitial();
+    } catch (err) {
+      console.log('AdMob Interstitial error:', err);
+    }
+  }
 }
 
 function createRecipeCard(recipe) {
@@ -281,7 +408,6 @@ function createRecipeCard(recipe) {
   }
 
   card.innerHTML = `
-    <div class="icon">${recipe.icon || '🍽️'}</div>
     <div class="info">
       <h4>${recipe.title}</h4>
       <p>${recipe.desc || 'Yapay Zeka Tarifi'}</p>
@@ -328,7 +454,9 @@ function setupEventListeners() {
   if (personaSelect) {
     personaSelect.addEventListener('change', (e) => {
       currentPersona = e.target.value;
-      updateLanguage();
+      if(checkPersonaPremium()){
+        updateLanguage();
+      }
     });
   }
   
@@ -336,30 +464,94 @@ function setupEventListeners() {
   const guideBtn = document.getElementById('guide-btn');
   const guideModal = document.getElementById('guide-modal');
   const closeGuide = document.getElementById('close-guide');
+  let onboardInterval;
   
   if (guideBtn && guideModal) {
     guideBtn.addEventListener('click', () => {
       guideModal.classList.remove('hidden');
+      // Start Animation
+      const steps = document.querySelectorAll('.onboard-step');
+      if (steps.length > 0) {
+        let currentStep = 0;
+        steps.forEach(s => s.classList.remove('active'));
+        steps[0].classList.add('active');
+        
+        clearInterval(onboardInterval);
+        onboardInterval = setInterval(() => {
+          steps[currentStep].classList.remove('active');
+          currentStep = (currentStep + 1) % steps.length;
+          // Trigger reflow to restart CSS animations
+          void steps[currentStep].offsetWidth; 
+          steps[currentStep].classList.add('active');
+        }, 3000); // 3 saniye her adım
+      }
     });
   }
   
   if (closeGuide && guideModal) {
     closeGuide.addEventListener('click', () => {
       guideModal.classList.add('hidden');
+      clearInterval(onboardInterval);
     });
   }
   
   window.addEventListener('click', (e) => {
     if (e.target === guideModal) {
       guideModal.classList.add('hidden');
+      clearInterval(onboardInterval);
+    }
+    const premiumModal = document.getElementById('premium-modal');
+    if (e.target === premiumModal) {
+      premiumModal.classList.add('hidden');
     }
   });
+
+
+  // Premium Modal Listeners
+  const closePremium = document.getElementById('close-premium');
+  const buyPremiumBtn = document.getElementById('buy-premium-btn');
+  const premiumModal = document.getElementById('premium-modal');
+
+  if (closePremium && premiumModal) {
+    closePremium.addEventListener('click', () => {
+      premiumModal.classList.add('hidden');
+    });
+  }
+
+  if (buyPremiumBtn && premiumModal) {
+    buyPremiumBtn.addEventListener('click', async () => {
+      if (Capacitor.getPlatform() !== 'web') {
+        try {
+          if(!currentPackage) {
+            alert("Ürün yüklenemedi. Lütfen tekrar deneyin.");
+            return;
+          }
+          const { customerInfo } = await Purchases.purchasePackage({ aPackage: currentPackage });
+          if (typeof customerInfo.entitlements.active['premium'] !== "undefined") {
+            localStorage.setItem('aiSef_isPremium', 'true');
+            alert('Tebrikler! Premium oldunuz. Limitler ve reklamlar kalktı!');
+            premiumModal.classList.add('hidden');
+            AdMob.hideBanner().catch(e => console.log(e));
+          }
+        } catch (e) {
+          if(!e.userCancelled) {
+             alert('Satın alma işleminde hata oluştu: ' + e.message);
+          }
+        }
+      } else {
+         // Web Fallback (Testing)
+         localStorage.setItem('aiSef_isPremium', 'true');
+         alert('Tebrikler! Test modunda Premium oldunuz. Limitler ve reklamlar kalktı!');
+         premiumModal.classList.add('hidden');
+      }
+    });
+  }
 }
 
 // --- Gerçek AI API Çağrısı (Kendi Backend'imize) ---
 async function generateRecipeFromGemini(ingredients) {
   try {
-    const response = await fetch(`/api/generateRecipe`, {
+    const response = await fetch(`https://kitchai.up.railway.app/api/generateRecipe`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -397,8 +589,15 @@ async function handleAIGeneration() {
     return;
   }
   
+  if (!checkQuota()) {
+    return; // Kota dolmuşsa işlem yapma
+  }
+  
   aiGenerateBtn.disabled = true;
   aiGenerateBtn.innerHTML = `<span class="magic-icon">⏳</span> <span>${translations[currentLang].generatingText}</span>`;
+
+  // Reklamı yükle (Mobildeyse)
+  showInterstitialAd().catch(e => console.log(e));
 
   try {
     const aiRecipe = await generateRecipeFromGemini(ingredients);
@@ -409,6 +608,7 @@ async function handleAIGeneration() {
     // Ekranı değiştir
     openRecipe(aiRecipe);
     ingredientInput.value = '';
+    incrementQuota();
 
   } catch (error) {
     console.error("AI Tarif Hatası:", error);
@@ -469,76 +669,49 @@ function toggleReadAloud() {
   if (isReadAloudActive) {
     readCurrentStep();
   } else {
-    window.speechSynthesis.cancel();
+    TextToSpeech.stop().catch(e => console.log(e));
   }
 }
 
-// --- Sistem Seslerini Hazırla ---
-let globalVoices = [];
-window.speechSynthesis.onvoiceschanged = () => {
-  globalVoices = window.speechSynthesis.getVoices();
-};
-
-function readCurrentStep() {
+async function readCurrentStep() {
   if (!isReadAloudActive || !currentRecipe) return;
   
   // Önceki konuşmayı durdur
-  window.speechSynthesis.cancel();
+  await TextToSpeech.stop().catch(e => console.log(e));
 
   const textToRead = currentRecipe.steps[currentStepIndex];
-  const utterance = new SpeechSynthesisUtterance(textToRead);
   
+  // Sadece dil ayarı verip sesi cihaza bırakıyoruz (Android uyumluluğu için)
   let targetLang = 'tr-TR';
   if (currentLang === 'en') targetLang = 'en-US';
   else if (currentLang === 'de') targetLang = 'de-DE';
   else if (currentLang === 'es') targetLang = 'es-ES';
-  utterance.lang = targetLang;
   
-  // Sistemdeki sesleri al (boşsa çekmeye çalış)
-  if (globalVoices.length === 0) {
-    globalVoices = window.speechSynthesis.getVoices();
-  }
+  let rate = 1.0;
+  let pitch = 1.0;
   
-  const langVoices = globalVoices.filter(v => v.lang.includes(targetLang.split('-')[0]));
-  
-  // Kadın/Erkek sesi bulmak için çok daha geniş isimler
-  // Emel: Edge Online Kadın Sesi, Ayşe/Yelda: Windows/Mac, Gül: Android
-  const femaleKeywords = ['ayşe', 'emel', 'yelda', 'gül', 'female', 'woman', 'zira', 'samantha', 'victoria', 'hazel', 'kadın'];
-  const maleKeywords = ['tolga', 'ahmet', 'ozan', 'male', 'man', 'david', 'alex', 'george', 'erkek'];
-  
-  let selectedVoice = null;
-
+  // Hız ve ton ayarları
   if (currentPersona === 'angry') {
-    utterance.rate = 1.25; 
-    utterance.pitch = 0.7; 
-    selectedVoice = langVoices.find(v => maleKeywords.some(kw => v.name.toLowerCase().includes(kw)));
+    rate = 1.15; 
+    pitch = 0.7; 
   } else if (currentPersona === 'mom') {
-    utterance.rate = 0.9;  
-    utterance.pitch = 1.7; // Eğer ses hala erkekse, 1.7 kalınlığı çok ince yaparak kadın sesine benzetir
-    selectedVoice = langVoices.find(v => femaleKeywords.some(kw => v.name.toLowerCase().includes(kw)));
+    rate = 0.9;  
+    pitch = 1.5; 
   } else if (currentPersona === 'student') {
-    utterance.rate = 1.15; 
-    utterance.pitch = 1.1; 
-    selectedVoice = langVoices.find(v => maleKeywords.some(kw => v.name.toLowerCase().includes(kw)));
-  } else {
-    utterance.rate = 1.0; 
-    utterance.pitch = 1.0; 
-    selectedVoice = langVoices.find(v => maleKeywords.some(kw => v.name.toLowerCase().includes(kw)));
+    rate = 1.15; 
+    pitch = 1.1; 
   }
   
-  // Bulunan sesi ata
-  if (selectedVoice) {
-    utterance.voice = selectedVoice;
-  } else if (langVoices.length > 0) {
-    // Eğer 'mom' ise, ve liste varsa tersinden arayalım (Genelde 2. ses kadındır)
-    if (currentPersona === 'mom' && langVoices.length > 1) {
-       utterance.voice = langVoices[langVoices.length - 1]; 
-    } else {
-       utterance.voice = langVoices[0];
-    }
+  try {
+    await TextToSpeech.speak({
+      text: textToRead,
+      lang: targetLang,
+      rate: rate,
+      pitch: pitch,
+    });
+  } catch(err) {
+    console.log("TTS Error:", err);
   }
-  
-  window.speechSynthesis.speak(utterance);
 }
 
 // --- Tarif Ekranı Mantığı ---
@@ -573,7 +746,7 @@ function closeRecipe() {
   }
   
   // Sesli asistanı da sustur
-  window.speechSynthesis.cancel();
+  TextToSpeech.stop().catch(e => console.log(e));
   isReadAloudActive = false;
 }
 
@@ -609,7 +782,6 @@ function renderRecipeSteps() {
     <div class="recipe-badges">
       ${currentRecipe.calories ? `<span class="badge badge-calories">${currentRecipe.calories}</span>` : ''}
       ${currentRecipe.time ? `<span class="badge badge-time">${currentRecipe.time}</span>` : ''}
-      ${currentRecipe.cost ? `<span class="badge badge-cost">${currentRecipe.cost}</span>` : ''}
     </div>
   `;
 
@@ -618,13 +790,13 @@ function renderRecipeSteps() {
   recipeView.innerHTML = `
     <div class="recipe-header">
       <button class="back-btn" id="back-btn">←</button>
-      <h2>${currentRecipe.icon || '🍽️'} ${currentRecipe.title}</h2>
+      <h2>${currentRecipe.title}</h2>
       <button class="save-btn ${isSaved ? 'active' : ''}" id="save-btn" title="${isSaved ? translations[currentLang].savedBtnText : translations[currentLang].saveBtnText}">
         <span>${isSaved ? '🔖' : '📑'}</span> <span id="save-btn-text">${isSaved ? translations[currentLang].savedBtnText : translations[currentLang].saveBtnText}</span>
       </button>
     </div>
 
-    ${currentRecipe.calories || currentRecipe.time || currentRecipe.cost ? badgesHTML : ''}
+    ${currentRecipe.calories || currentRecipe.time ? badgesHTML : ''}
     
     <div class="step-container">
       <div class="step-badge">Adım ${currentStepIndex + 1} / ${totalSteps}</div>
@@ -676,4 +848,8 @@ function changeStep(direction) {
   }
 }
 
-init();
+try {
+  init();
+} catch (e) {
+  alert("Uygulama başlatılırken kritik hata: " + e.message + "\n" + e.stack);
+}

@@ -2,7 +2,7 @@
 <html lang="tr">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
+    <link rel="icon" type="image/png" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>KitchAI - Akıllı Mutfak Asistanın</title>
     <!-- Modern Typography: Outfit & Inter -->
@@ -19,7 +19,7 @@
         <header class="header">
           <div class="logo-area">
             <div class="logo">
-              <span class="emoji">🍳</span>
+              <img src="/logo.png" alt="KitchAI Logo" class="app-logo" />
               <h1>KitchAI</h1>
             </div>
             <p class="subtitle" data-i18n="headerSubtitle">Yemek yapmayı bilmeyenler için aşırı basit rehber</p>
@@ -28,8 +28,8 @@
             <div class="persona-wrapper">
               <select id="persona-select" class="glass-dropdown">
                 <option value="standart" data-i18n="chefStandart">👨‍🍳 Standart Şef</option>
-                <option value="angry" data-i18n="chefAngry">🤬 Sinirli Şef (Ramsay)</option>
-                <option value="mom" data-i18n="chefMom">👵 Sevecen Anne</option>
+                <option value="angry" data-i18n="chefAngry">🔒 🤬 Sinirli Şef (Ramsay)</option>
+                <option value="mom" data-i18n="chefMom">🔒 👵 Sevecen Anne</option>
                 <option value="student" data-i18n="chefStudent">🎓 Üşengeç Öğrenci</option>
               </select>
               <p id="persona-hint" class="persona-hint">Her türlü yemeği tam ölçüsüyle profesyonelce anlatır.</p>
@@ -78,13 +78,68 @@
         <div class="modal-content glass-container">
           <span id="close-guide" class="close-btn">&times;</span>
           <h2 data-i18n="guideTitle">📖 KitchAI Nasıl Kullanılır?</h2>
-          <ul class="guide-list">
-            <li><span class="emoji">📝</span> <b data-i18n="guideStep1Title">Tarif Arama:</b> <span data-i18n="guideStep1Desc">Elindeki malzemeleri veya istediğin yemek adını yaz. Büyülü butona bas!</span></li>
-            <li><span class="emoji">👨‍🍳</span> <b data-i18n="guideStep2Title">Şef Seçimi:</b> <span data-i18n="guideStep2Desc">Farklı tarzlarda (Ramsay, Anne vb.) tarif ve sesler almak için şef tipini değiştir.</span></li>
-            <li><span class="emoji">🔊</span> <b data-i18n="guideStep3Title">Sesli Asistan:</b> <span data-i18n="guideStep3Desc">Tarif ekranında 'Bana Oku' butonuna basarak şefin tarifi sesli anlatmasını sağla.</span></li>
-            <li><span class="emoji">🎙️</span> <b data-i18n="guideStep4Title">Sesli Komut:</b> <span data-i18n="guideStep4Desc">Asistan konuşurken 'Sonraki', 'İleri' diyerek bir sonraki; 'Önceki', 'Geri' diyerek önceki adıma geç.</span></li>
-            <li><span class="emoji">🔖</span> <b data-i18n="guideStep5Title">Kaydetme:</b> <span data-i18n="guideStep5Desc">Beğendiğin tarifleri kaydetmek için tarif ekranındaki 'Tarifi Kaydet' butonuna bas.</span></li>
+          <div class="onboarding-animation">
+            <div class="onboard-step step-1">
+              <div class="onboard-icon">📝</div>
+              <div class="onboard-text">
+                <b data-i18n="guideStep1Title">1. Malzemelerini Yaz</b>
+                <p data-i18n="guideStep1Desc">Dolabındaki malzemeleri kutuya gir.</p>
+              </div>
+              <div class="onboard-visual">
+                <div class="fake-input"><span data-i18n="guideFakeInput">Tavuk, Krema, Mantar</span><span class="cursor">|</span></div>
+              </div>
+            </div>
+            
+            <div class="onboard-step step-2">
+              <div class="onboard-icon">👨‍🍳</div>
+              <div class="onboard-text">
+                <b data-i18n="guideStep2Title">2. Şefini Seç</b>
+                <p data-i18n="guideStep2Desc">Farklı karakterlerde şefler seç.</p>
+              </div>
+              <div class="onboard-visual">
+                <div class="fake-select" data-i18n="guideFakeSelect">🤬 Sinirli Şef (Ramsay)</div>
+              </div>
+            </div>
+
+            <div class="onboard-step step-3">
+              <div class="onboard-icon">🔊</div>
+              <div class="onboard-text">
+                <b data-i18n="guideStep3Title">3. Dinle ve Pişir</b>
+                <p data-i18n="guideStep3Desc">AI tarifi anlatsın, sen pişir!</p>
+              </div>
+              <div class="onboard-visual">
+                <div class="fake-recipe">
+                  <div class="fake-audio">🔊<div class="wave"></div></div>
+                  <div class="fake-lines">
+                    <div class="line w-full"></div>
+                    <div class="line w-3-4"></div>
+                    <div class="line w-1-2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KitchAI Premium Modal -->
+      <div id="premium-modal" class="modal hidden">
+        <div class="modal-content glass-container" style="text-align: center; max-width: 400px;">
+          <span id="close-premium" class="close-btn">&times;</span>
+          <div style="font-size: 3rem; margin-bottom: 10px;">👑</div>
+          <h2 style="color: #ffd700; margin-bottom: 15px;">KitchAI Premium</h2>
+          <p id="premium-message" style="margin-bottom: 20px; font-size: 1.1rem; line-height: 1.5;">Günlük ücretsiz arama limitin doldu veya Kilitli bir Şef modunu açmak istedin.</p>
+          
+          <ul style="text-align: left; margin: 0 auto 20px auto; display: inline-block; padding: 0;">
+            <li style="margin-bottom: 10px; list-style: none;">✅ Sınırsız Tarif Üretimi</li>
+            <li style="margin-bottom: 10px; list-style: none;">✅ Tüm Reklamları Kaldır</li>
+            <li style="margin-bottom: 10px; list-style: none;">✅ Gordon Ramsay Modu (Kilitsiz)</li>
+            <li style="margin-bottom: 10px; list-style: none;">✅ Sevecen Anne Modu (Kilitsiz)</li>
           </ul>
+
+          <button id="buy-premium-btn" class="primary-btn" style="background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%); color: #000; width: 100%; font-weight: bold; font-size: 1.1rem; padding: 15px;">
+            <span id="premium-price-text">Premium Ol</span>
+          </button>
         </div>
       </div>
 

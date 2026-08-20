@@ -1,0 +1,12 @@
+{
+  "ad": "KitchAI (Yapay Zeka Şef)",
+  "kategori": "İçerik & Topluluk | Diğer",
+  "ozet": "Kullanıcının malzemelerine göre sesli ve yazılı tarif üreten, farklı şef profillerine sahip yerel mobil/web uygulaması.",
+  "eleme": "Gemini API üzerinden Türkçe, İngilizce, Almanca ve İspanyolca dillerinde akıllı tarif üretimi. Supabase üzerinden önbellekleme (caching) ile sorgu maliyetlerini düşürür.",
+  "model": "Gemini-3.6-flash / Gemini-1.5-flash (Fallback yapısı)",
+  "sunum": "PWA ve Capacitor (Android APK) mobil uygulaması / Railway web yayını.",
+  "durum": "aktif",
+  "dahil_et": true,
+  "tetik": "Elle / Arayüz üzerinden (Supabase rate limiting ile korumalı)",
+  "kaynak_notu": "Ali Osman için sıfırdan inşa edildi. Frontend Vanilla JS/Vite, Backend Express + Supabase + Gemini."
+}
