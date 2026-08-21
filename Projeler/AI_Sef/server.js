@@ -73,6 +73,30 @@ app.get('/api/discover', async (req, res) => {
 
     if (error) throw error;
     
+    // Yorum sayılarını da al
+    if (data && data.length > 0) {
+      try {
+        const recipeIds = data.map(r => r.id);
+        const { data: commentsData } = await supabase
+          .from('comments')
+          .select('recipe_id')
+          .in('recipe_id', recipeIds);
+          
+        if (commentsData) {
+          const counts = {};
+          commentsData.forEach(c => {
+            counts[c.recipe_id] = (counts[c.recipe_id] || 0) + 1;
+          });
+          data = data.map(recipe => ({
+            ...recipe,
+            comments_count: counts[recipe.id] || 0
+          }));
+        }
+      } catch (err) {
+        console.error("Yorum sayilari cekilemedi:", err.message);
+      }
+    }
+    
     res.status(200).json(data);
   } catch (err) {
     console.error("Discover API error:", err.message);

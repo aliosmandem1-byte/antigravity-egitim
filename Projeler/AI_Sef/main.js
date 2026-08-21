@@ -938,8 +938,9 @@ async function fetchDiscoverRecipes() {
             ${miniBadges}
           </div>
           <div class="social-actions" style="position: absolute; right: 16px; bottom: 16px; display: flex; align-items: center; gap: 12px; z-index: 10;">
-            <div class="comment-btn-container" style="display: flex; align-items: center; justify-content: center; cursor: pointer;">
+            <div class="comment-btn-container" style="display: flex; align-items: center; justify-content: center; cursor: pointer; gap: 4px;">
               <button class="comment-btn" data-id="${recipe.id}" style="background:none; border:none; font-size:1.4rem; transition: transform 0.2s;" title="Yorumlar">💬</button>
+              <span class="comment-count" style="font-weight: 600; font-size: 0.95rem; color: var(--text-muted);">${item.comments_count || 0}</span>
             </div>
             <div class="like-btn-container" style="display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
               <span class="like-count" style="font-weight: 600; font-size: 0.95rem; color: var(--text-muted);">${item.likes || 0}</span>
