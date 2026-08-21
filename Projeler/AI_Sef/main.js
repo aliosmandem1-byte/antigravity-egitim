@@ -937,19 +937,16 @@ async function fetchDiscoverRecipes() {
             <p>${recipe.desc || 'Yapay Zeka Tarifi'}</p>
             ${miniBadges}
           </div>
-          <div class="card-action comment-btn-container" style="right: 120px; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-            <button class="comment-btn" data-id="${recipe.id}" style="background:none; border:none; font-size:1.5rem; transition: transform 0.2s;" title="Yorumlar">
-              💬
-            </button>
-          </div>
-          <div class="card-action like-btn-container" style="right: 60px; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">
-            <span class="like-count" style="font-weight: 600; font-size: 0.95rem; color: var(--text-muted);">${item.likes || 0}</span>
-            <button class="like-btn ${isLiked ? 'liked' : ''}" data-id="${recipe.id}" style="background:none; border:none; font-size:1.5rem; transition: transform 0.2s;">
-              ${isLiked ? '❤️' : '🤍'}
-            </button>
-          </div>
-          <div class="card-action">
-            <span class="action-icon">→</span>
+          <div class="social-actions" style="position: absolute; right: 16px; bottom: 16px; display: flex; align-items: center; gap: 12px; z-index: 10;">
+            <div class="comment-btn-container" style="display: flex; align-items: center; justify-content: center; cursor: pointer;">
+              <button class="comment-btn" data-id="${recipe.id}" style="background:none; border:none; font-size:1.4rem; transition: transform 0.2s;" title="Yorumlar">💬</button>
+            </div>
+            <div class="like-btn-container" style="display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
+              <span class="like-count" style="font-weight: 600; font-size: 0.95rem; color: var(--text-muted);">${item.likes || 0}</span>
+              <button class="like-btn ${isLiked ? 'liked' : ''}" data-id="${recipe.id}" style="background:none; border:none; font-size:1.4rem; transition: transform 0.2s;">
+                ${isLiked ? '❤️' : '🤍'}
+              </button>
+            </div>
           </div>
         `;
 
