@@ -3,6 +3,17 @@ import { Capacitor } from '@capacitor/core';
 import { AdMob, BannerAdSize, BannerAdPosition } from '@capacitor-community/admob';
 import { TextToSpeech } from '@capacitor-community/text-to-speech';
 import { Purchases } from '@revenuecat/purchases-capacitor';
+import { categories as categories_tr } from './categories.js';
+import { categories as categories_en } from './categories_en.js';
+import { categories as categories_de } from './categories_de.js';
+import { categories as categories_es } from './categories_es.js';
+
+const categoryData = {
+  tr: categories_tr,
+  en: categories_en,
+  de: categories_de,
+  es: categories_es
+};
 
 // --- Sahte Veri (Mock Data) ---
 // Not: Railway tetiklemesi için boş commit
@@ -60,8 +71,8 @@ const translations = {
     inputHint: "💡 İpucu: İster elindeki malzemeleri yaz, istersen doğrudan 'Sezar Salata' gibi istediğin bir tarifin adını yaz!",
     guideBtn: "📖 Nasıl Kullanılır?",
     guideTitle: "📖 KitchAI Nasıl Kullanılır?",
-    guideStep1Title: "1. Malzemelerini Yaz",
-    guideStep1Desc: "Dolabındaki malzemeleri kutuya gir.",
+    guideStep1Title: "1. Malzemelerini Yaz veya Söyle",
+    guideStep1Desc: "İster yaz, ister mikrofon (🎤) tuşuna basıp sesli söyle.",
     guideStep2Title: "2. Şefini Seç",
     guideStep2Desc: "Farklı karakterlerde şefler seç.",
     guideStep3Title: "3. Dinle ve Pişir",
@@ -88,8 +99,8 @@ const translations = {
     inputHint: "💡 Hint: You can write your available ingredients, or directly ask for a specific recipe like 'Caesar Salad'!",
     guideBtn: "📖 How to Use?",
     guideTitle: "📖 How to Use KitchAI?",
-    guideStep1Title: "1. Write Ingredients",
-    guideStep1Desc: "Enter your fridge ingredients.",
+    guideStep1Title: "1. Type or Say Ingredients",
+    guideStep1Desc: "Type them or use the mic (🎤) to speak.",
     guideStep2Title: "2. Choose a Chef",
     guideStep2Desc: "Select different chef personas.",
     guideStep3Title: "3. Listen & Cook",
@@ -116,8 +127,8 @@ const translations = {
     inputHint: "💡 Tipp: Gib deine Zutaten ein oder frage direkt nach einem Rezept wie 'Caesar Salat'!",
     guideBtn: "📖 Wie benutzt man es?",
     guideTitle: "📖 Wie man KitchAI benutzt?",
-    guideStep1Title: "1. Zutaten eingeben",
-    guideStep1Desc: "Gib deine Zutaten aus dem Kühlschrank ein.",
+    guideStep1Title: "1. Zutaten schreiben oder sagen",
+    guideStep1Desc: "Schreibe sie oder sprich ins Mikrofon (🎤).",
     guideStep2Title: "2. Koch auswählen",
     guideStep2Desc: "Wähle verschiedene Köche.",
     guideStep3Title: "3. Hören & Kochen",
@@ -144,8 +155,8 @@ const translations = {
     inputHint: "💡 Consejo: ¡Escribe tus ingredientes disponibles o pide directamente una receta como 'Ensalada César'!",
     guideBtn: "📖 ¿Cómo usar?",
     guideTitle: "📖 ¿Cómo usar KitchAI?",
-    guideStep1Title: "1. Escribe ingredientes",
-    guideStep1Desc: "Ingresa tus ingredientes.",
+    guideStep1Title: "1. Escribe o di ingredientes",
+    guideStep1Desc: "Escríbelos o usa el micrófono (🎤) para hablar.",
     guideStep2Title: "2. Elige un chef",
     guideStep2Desc: "Selecciona diferentes chefs.",
     guideStep3Title: "3. Escucha y cocina",
@@ -165,6 +176,12 @@ const aiGenerateBtn = document.getElementById('ai-generate-btn');
 const ingredientInput = document.getElementById('ingredient-input');
 const languageSelect = document.getElementById('language-select');
 const personaSelect = document.getElementById('persona-select');
+const categoriesCarousel = document.getElementById('categories-carousel');
+const categoryDetailView = document.getElementById('category-detail-view');
+const discoverBtn = document.getElementById('discover-btn');
+const discoverView = document.getElementById('discover-view');
+const discoverCards = document.getElementById('discover-cards');
+const discoverBackBtn = document.getElementById('discover-back-btn');
 
 // --- State ---
 let currentRecipe = null;
@@ -224,6 +241,9 @@ function updateLanguage() {
   if(hintEl) {
     hintEl.innerText = hintMap[currentLang][currentPersona] || hintMap['tr'][currentPersona];
   }
+  
+  // Re-render categories with the new language
+  renderCategories();
 }
 
 // --- LocalStorage Fonksiyonları ---
@@ -253,14 +273,81 @@ function isRecipeSaved(title) {
   return savedRecipes.some(r => r.title === title);
 }
 
-function init() {
-  renderSavedRecipes();
-  setupEventListeners();
+// --- Custom Dropdown Implementation ---
+function initCustomDropdowns() {
+  const selects = ['persona-select', 'language-select'];
+  selects.forEach(id => {
+    const select = document.getElementById(id);
+    if (!select || select.dataset.customized) return;
+    select.dataset.customized = "true";
+    
+    select.style.display = 'none';
+    const wrapper = document.createElement('div');
+    wrapper.className = 'custom-dropdown';
+    select.parentNode.insertBefore(wrapper, select);
+    wrapper.appendChild(select);
+    
+    const display = document.createElement('div');
+    display.className = 'custom-dropdown-display';
+    const selectedOption = select.options[select.selectedIndex];
+    display.innerHTML = `<span class="c-val">${selectedOption.textContent}</span> <span class="arrow">▼</span>`;
+    wrapper.appendChild(display);
+    
+    const list = document.createElement('div');
+    list.className = 'custom-dropdown-list';
+    
+    Array.from(select.options).forEach((opt, index) => {
+      const item = document.createElement('div');
+      item.className = 'custom-dropdown-item' + (index === select.selectedIndex ? ' active' : '');
+      item.innerHTML = opt.textContent;
+      
+      const i18nKey = opt.getAttribute('data-i18n');
+      if (i18nKey) item.setAttribute('data-i18n', i18nKey);
+      
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        select.value = opt.value;
+        select.dispatchEvent(new Event('change'));
+        
+        display.querySelector('.c-val').textContent = item.textContent;
+        list.querySelectorAll('.custom-dropdown-item').forEach(el => el.classList.remove('active'));
+        item.classList.add('active');
+        list.classList.remove('show');
+      });
+      list.appendChild(item);
+    });
+    
+    wrapper.appendChild(list);
+    
+    display.addEventListener('click', (e) => {
+      e.stopPropagation();
+      document.querySelectorAll('.custom-dropdown-list').forEach(l => {
+        if(l !== list) l.classList.remove('show');
+      });
+      list.classList.toggle('show');
+    });
+    
+    wrapper.sync = function() {
+      const currentOpt = select.options[select.selectedIndex];
+      if(currentOpt) display.querySelector('.c-val').textContent = currentOpt.textContent;
+    };
+  });
+  
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.custom-dropdown-list').forEach(l => l.classList.remove('show'));
+  });
+}
+
+// --- Başlangıç Ayarları ---
+document.addEventListener('DOMContentLoaded', () => {
   initSpeechRecognition();
+  initCustomDropdowns();
   updateLanguage();
   initRevenueCat();
   initAdMob();
-}
+  renderSavedRecipes();
+  setupEventListeners();
+});
 
 async function initRevenueCat() {
   if (Capacitor.getPlatform() !== 'web') {
@@ -436,7 +523,80 @@ function renderSavedRecipes() {
   }
 }
 
+function renderCategories() {
+  const currentCategories = categoryData[currentLang] || categoryData['tr'];
+  if (!categoriesCarousel) return;
+  categoriesCarousel.innerHTML = '';
+  currentCategories.forEach(category => {
+    const card = document.createElement('div');
+    card.className = 'category-card';
+    card.innerHTML = `
+      <img src="${category.image}" alt="${category.title}">
+      <div class="category-overlay">
+        <h4>${category.title}</h4>
+        <p>${category.desc}</p>
+      </div>
+    `;
+    card.addEventListener('click', () => openCategoryDetail(category));
+    categoriesCarousel.appendChild(card);
+  });
+}
+
+function openCategoryDetail(category) {
+  homeView.classList.add('hidden');
+  categoryDetailView.classList.remove('hidden');
+  
+  let recipesHtml = '';
+  category.recipes.forEach((recipe, index) => {
+    let miniBadges = '';
+    if (recipe.calories || recipe.time) {
+      miniBadges = `
+        <div class="card-mini-badges">
+          ${recipe.calories ? `<span>${recipe.calories.split(' ')[0]} ${recipe.calories.split(' ')[1]}</span>` : ''}
+          ${recipe.time ? `<span>${recipe.time}</span>` : ''}
+        </div>
+      `;
+    }
+    
+    recipesHtml += `
+      <div class="recipe-card no-image" data-id="${recipe.id}">
+        <div class="info">
+          <h4>${recipe.title}</h4>
+          <p>${recipe.desc}</p>
+          ${miniBadges}
+        </div>
+        <div class="card-action"><span class="action-icon">→</span></div>
+      </div>
+    `;
+  });
+
+  categoryDetailView.innerHTML = `
+    <div class="category-detail-header">
+      <button class="back-btn" id="category-back-btn">←</button>
+      <h2>${category.title} Tarifleri</h2>
+    </div>
+    <div class="category-detail-grid">
+      ${recipesHtml}
+    </div>
+  `;
+  
+  document.getElementById('category-back-btn').addEventListener('click', () => {
+    categoryDetailView.classList.add('hidden');
+    homeView.classList.remove('hidden');
+  });
+  
+  const recipeCards = categoryDetailView.querySelectorAll('.recipe-card');
+  recipeCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const id = card.getAttribute('data-id');
+      const recipe = category.recipes.find(r => r.id === id);
+      if(recipe) openRecipe(recipe);
+    });
+  });
+}
+
 function setupEventListeners() {
+  renderCategories();
   if (aiGenerateBtn) aiGenerateBtn.addEventListener('click', handleAIGeneration);
   if (ingredientInput) {
     ingredientInput.addEventListener('keypress', function (e) {
@@ -460,6 +620,22 @@ function setupEventListeners() {
     });
   }
   
+  // Discover (Keşfet) Modal Listeners
+  if (discoverBtn && discoverView) {
+    discoverBtn.addEventListener('click', () => {
+      homeView.classList.add('hidden');
+      discoverView.classList.remove('hidden');
+      fetchDiscoverRecipes();
+    });
+  }
+  
+  if (discoverBackBtn && discoverView) {
+    discoverBackBtn.addEventListener('click', () => {
+      discoverView.classList.add('hidden');
+      homeView.classList.remove('hidden');
+    });
+  }
+
   // Guide Modal Listeners
   const guideBtn = document.getElementById('guide-btn');
   const guideModal = document.getElementById('guide-modal');
@@ -551,12 +727,13 @@ function setupEventListeners() {
 // --- Gerçek AI API Çağrısı (Kendi Backend'imize) ---
 async function generateRecipeFromGemini(ingredients) {
   try {
+    const promptIngredients = ingredients + " (ÖNEMLİ NOT: Lütfen tarifin malzeme ölçülerini tam olarak 1-2 kişilik olacak şekilde ayarla.)";
     const response = await fetch(`https://kitchai.up.railway.app/api/generateRecipe`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ingredients, language: currentLang, persona: currentPersona })
+      body: JSON.stringify({ ingredients: promptIngredients, language: currentLang, persona: currentPersona })
     });
 
     if (!response.ok) {
@@ -620,6 +797,9 @@ async function handleAIGeneration() {
 }
 
 // --- Sesli Komut (Speech Recognition) ---
+let dictationRecognition = null;
+let isDictating = false;
+
 function initSpeechRecognition() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (SpeechRecognition) {
@@ -651,12 +831,165 @@ function initSpeechRecognition() {
     recognition.onerror = function(event) {
       console.error("Speech Recognition Hata:", event.error);
     };
+
+    // Dictation (Voice Input for ingredients)
+    dictationRecognition = new SpeechRecognition();
+    dictationRecognition.lang = 'tr-TR';
+    dictationRecognition.continuous = false;
+    dictationRecognition.interimResults = false;
+
+    const micBtn = document.getElementById('mic-btn');
+    if (micBtn) {
+      micBtn.addEventListener('click', () => {
+        if (isDictating) {
+          dictationRecognition.stop();
+          return;
+        }
+        dictationRecognition.start();
+      });
+    }
+
+    dictationRecognition.onstart = function() {
+      isDictating = true;
+      const micBtn = document.getElementById('mic-btn');
+      if(micBtn) micBtn.classList.add('recording');
+      ingredientInput.placeholder = "Sizi dinliyorum...";
+    };
+
+    dictationRecognition.onresult = function(event) {
+      const transcript = event.results[0][0].transcript;
+      ingredientInput.value = transcript;
+      // Auto-submit after dictation ends
+      setTimeout(handleAIGeneration, 500);
+    };
+
+    dictationRecognition.onend = function() {
+      isDictating = false;
+      const micBtn = document.getElementById('mic-btn');
+      if(micBtn) micBtn.classList.remove('recording');
+      if (currentLang === 'en') ingredientInput.placeholder = "Ex: Chicken, tomato, pasta...";
+      else if (currentLang === 'de') ingredientInput.placeholder = "Bsp: Hähnchen, Tomate, Nudeln...";
+      else if (currentLang === 'es') ingredientInput.placeholder = "Ej: Pollo, tomate, pasta...";
+      else ingredientInput.placeholder = "Örn: Tavuk, domates, makarna...";
+    };
+
+
+
+    dictationRecognition.onerror = function(event) {
+      console.error("Dictation Hata:", event.error);
+      isDictating = false;
+      const micBtn = document.getElementById('mic-btn');
+      if(micBtn) micBtn.classList.remove('recording');
+    };
+
   } else {
     console.warn("Tarayıcınız SpeechRecognition API'sini desteklemiyor.");
+    const micBtn = document.getElementById('mic-btn');
+    if(micBtn) micBtn.style.display = 'none';
   }
 }
 
 // --- Sesli Asistan (Text-to-Speech) ---
+
+// --- Topluluk Keşfet (Discover) ---
+async function fetchDiscoverRecipes() {
+  if (!discoverCards) return;
+  discoverCards.innerHTML = '<div style="text-align:center; padding: 40px; color: var(--text-muted);">Topluluk tarifleri yükleniyor... ⏳</div>';
+  
+  try {
+    const response = await fetch('https://kitchai.up.railway.app/api/discover');
+    if (!response.ok) throw new Error('Veri çekilemedi');
+    const data = await response.json();
+    
+    if (data && data.length > 0) {
+      discoverCards.innerHTML = '';
+      data.forEach(item => {
+        const recipe = item.response;
+        if (!recipe.id) recipe.id = item.id;
+        
+        const card = document.createElement('div');
+        card.className = 'recipe-card';
+        
+        let miniBadges = '';
+        if (recipe.calories || recipe.time) {
+          miniBadges = `
+            <div class="card-mini-badges">
+              ${recipe.calories ? `<span>${recipe.calories.split(' ')[0]} ${recipe.calories.split(' ')[1]}</span>` : ''}
+              ${recipe.time ? `<span>${recipe.time}</span>` : ''}
+              <span>${item.persona === 'angry' ? '🤬' : item.persona === 'mom' ? '👵' : item.persona === 'student' ? '🎓' : '👨‍🍳'}</span>
+            </div>
+          `;
+        }
+
+        let likedRecipes = JSON.parse(localStorage.getItem('aiSef_likedRecipes') || '[]');
+        const isLiked = likedRecipes.includes(recipe.id);
+
+        card.innerHTML = `
+          <div class="info">
+            <h4>${recipe.title}</h4>
+            <p>${recipe.desc || 'Yapay Zeka Tarifi'}</p>
+            ${miniBadges}
+          </div>
+          <div class="card-action like-btn-container" style="right: 60px; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">
+            <span class="like-count" style="font-weight: 600; font-size: 0.95rem; color: var(--text-muted);">${item.likes || 0}</span>
+            <button class="like-btn ${isLiked ? 'liked' : ''}" data-id="${recipe.id}" style="background:none; border:none; font-size:1.5rem; transition: transform 0.2s;">
+              ${isLiked ? '❤️' : '🤍'}
+            </button>
+          </div>
+          <div class="card-action">
+            <span class="action-icon">→</span>
+          </div>
+        `;
+
+        const likeBtn = card.querySelector('.like-btn');
+        const countSpan = card.querySelector('.like-count');
+        likeBtn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          let likes = JSON.parse(localStorage.getItem('aiSef_likedRecipes') || '[]');
+          
+          let isAdding = true;
+          if (likeBtn.classList.contains('liked')) {
+            likeBtn.classList.remove('liked');
+            likeBtn.innerHTML = '🤍';
+            likes = likes.filter(id => id !== recipe.id);
+            isAdding = false;
+            countSpan.innerText = Math.max(0, parseInt(countSpan.innerText) - 1);
+          } else {
+            likeBtn.classList.add('liked');
+            likeBtn.innerHTML = '❤️';
+            likeBtn.style.transform = 'scale(1.3)';
+            setTimeout(() => likeBtn.style.transform = 'scale(1)', 200);
+            if (!likes.includes(recipe.id)) likes.push(recipe.id);
+            countSpan.innerText = parseInt(countSpan.innerText) + 1;
+          }
+          localStorage.setItem('aiSef_likedRecipes', JSON.stringify(likes));
+
+          try {
+            await fetch(`https://kitchai.up.railway.app/api/recipe/${recipe.id}/like`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ isLiked: isAdding })
+            });
+          } catch(err) {
+            console.error("Like backend hatası", err);
+          }
+        });
+
+        card.addEventListener('click', () => {
+          discoverView.classList.add('hidden');
+          openRecipe(recipe);
+        });
+
+        discoverCards.appendChild(card);
+      });
+    } else {
+      discoverCards.innerHTML = '<div style="text-align:center; padding: 40px; color: var(--text-muted);">Henüz hiç tarif üretilmemiş! İlk tarifi sen üret. 🍳</div>';
+    }
+  } catch (error) {
+    console.error("Keşfet hatası:", error);
+    discoverCards.innerHTML = '<div style="text-align:center; padding: 40px; color: red;">Tarifler yüklenirken bir hata oluştu. Lütfen tekrar dene.</div>';
+  }
+}
 function toggleReadAloud() {
   isReadAloudActive = !isReadAloudActive;
   
@@ -721,7 +1054,11 @@ function openRecipe(recipe) {
   isReadAloudActive = false; // Her yeni tarifte kapalı gelsin
   
   homeView.classList.add('hidden');
+  if (categoryDetailView) categoryDetailView.classList.add('hidden');
   recipeView.classList.remove('hidden');
+  
+  const headerControls = document.querySelector('.header-controls');
+  if (headerControls) headerControls.style.display = 'none';
   
   renderRecipeSteps();
 
@@ -737,7 +1074,11 @@ function openRecipe(recipe) {
 function closeRecipe() {
   homeView.classList.remove('hidden');
   recipeView.classList.add('hidden');
+  if (categoryDetailView) categoryDetailView.classList.add('hidden');
   currentRecipe = null;
+  
+  const headerControls = document.querySelector('.header-controls');
+  if (headerControls) headerControls.style.display = 'flex';
   
   renderSavedRecipes();
 
@@ -780,6 +1121,7 @@ function renderRecipeSteps() {
 
   const badgesHTML = `
     <div class="recipe-badges">
+      <span class="badge badge-portion">👥 1-2 Kişilik</span>
       ${currentRecipe.calories ? `<span class="badge badge-calories">${currentRecipe.calories}</span>` : ''}
       ${currentRecipe.time ? `<span class="badge badge-time">${currentRecipe.time}</span>` : ''}
     </div>
@@ -848,8 +1190,3 @@ function changeStep(direction) {
   }
 }
 
-try {
-  init();
-} catch (e) {
-  alert("Uygulama başlatılırken kritik hata: " + e.message + "\n" + e.stack);
-}

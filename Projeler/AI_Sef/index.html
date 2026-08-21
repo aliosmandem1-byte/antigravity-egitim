@@ -11,6 +11,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
   </head>
   <body>
+    <div class="ambient-orbs">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+    </div>
+    
     <div id="app">
       <!-- Ana Konteyner -->
       <div class="glass-container">
@@ -34,6 +40,7 @@
               </select>
               <p id="persona-hint" class="persona-hint">Her türlü yemeği tam ölçüsüyle profesyonelce anlatır.</p>
             </div>
+            <button id="discover-btn" class="guide-btn" style="background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent)); color: white; border: none; font-weight: bold; box-shadow: 0 4px 10px rgba(244, 63, 94, 0.3);">🌍 Keşfet</button>
             <button id="guide-btn" class="guide-btn" data-i18n="guideBtn">📖 Nasıl Kullanılır?</button>
             <select id="language-select" class="glass-dropdown">
               <option value="tr">🇹🇷 TR</option>
@@ -51,12 +58,20 @@
             <p data-i18n="heroSubtitle">Dolaptaki malzemelerini yaz veya önerdiğimiz garanti tariflerden birini seç.</p>
             
             <div class="search-box">
+              <button id="mic-btn" class="icon-btn" title="Sesli Söyle">🎤</button>
               <input type="text" id="ingredient-input" placeholder="Örn: Tavuk, domates, makarna..." autocomplete="off" />
               <button id="ai-generate-btn" class="primary-btn">
                 <span class="magic-icon">✨</span> <span data-i18n="generateBtn">AI ile Tarif Bul</span>
               </button>
             </div>
             <p class="input-hint" data-i18n="inputHint">💡 İpucu: İster elindeki malzemeleri yaz, istersen doğrudan "Sezar Salata" gibi istediğin bir tarifin adını yaz!</p>
+          </div>
+
+          <div class="categories-section" id="categories-section">
+            <h3 data-i18n="categoriesTitle">🌟 Kategorileri Keşfet</h3>
+            <div class="categories-carousel" id="categories-carousel">
+              <!-- JS ile doldurulacak -->
+            </div>
           </div>
 
           <div class="saved-recipes hidden" id="saved-recipes-section">
@@ -71,19 +86,38 @@
            <!-- JS ile doldurulacak -->
         </section>
 
+        <!-- Keşfet / Topluluk Görünümü -->
+        <section class="discover-view hidden" id="discover-view">
+          <div class="category-detail-header" style="margin-bottom: 10px;">
+            <button class="back-btn" id="discover-back-btn">←</button>
+            <h2>🌍 Topluluğun Tarifleri</h2>
+          </div>
+          <p style="text-align: center; color: var(--text-muted); margin-bottom: 24px; font-size: 0.95rem;">
+            Diğer KitchAI kullanıcılarının ürettiği birbirinden ilginç yapay zeka tariflerini keşfet!
+          </p>
+          <div class="recipe-cards" id="discover-cards">
+             <!-- JS ile API'den doldurulacak -->
+             <div style="text-align:center; padding: 40px; color: var(--text-muted);">Yükleniyor... ⏳</div>
+          </div>
+        </section>
+
+        <section class="category-detail-view hidden" id="category-detail-view">
+           <!-- JS ile doldurulacak -->
+        </section>
+
       </div>
       
       <!-- Kullanım Rehberi Modal -->
       <div id="guide-modal" class="modal hidden">
-        <div class="modal-content glass-container">
+        <div class="modal-content glass-container dark-modal">
           <span id="close-guide" class="close-btn">&times;</span>
           <h2 data-i18n="guideTitle">📖 KitchAI Nasıl Kullanılır?</h2>
           <div class="onboarding-animation">
             <div class="onboard-step step-1">
               <div class="onboard-icon">📝</div>
               <div class="onboard-text">
-                <b data-i18n="guideStep1Title">1. Malzemelerini Yaz</b>
-                <p data-i18n="guideStep1Desc">Dolabındaki malzemeleri kutuya gir.</p>
+                <b data-i18n="guideStep1Title">1. Malzemelerini Yaz veya Söyle</b>
+                <p data-i18n="guideStep1Desc">İster yaz, ister mikrofon (🎤) tuşuna basıp sesli söyle.</p>
               </div>
               <div class="onboard-visual">
                 <div class="fake-input"><span data-i18n="guideFakeInput">Tavuk, Krema, Mantar</span><span class="cursor">|</span></div>
@@ -144,6 +178,6 @@
       </div>
 
     </div>
-    <script type="module" src="/main.js?v=2"></script>
+    <script type="module" src="/main.js?v=3"></script>
   </body>
 </html>

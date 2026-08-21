@@ -50,6 +50,73 @@ app.get('/api/test-direct', async (req, res) => {
     res.status(500).json({ error: e.message, name: e.name, stack: e.stack });
   }
 });
+
+// Topluluk Tarifleri (Keşfet) Getirme
+app.get('/api/discover', async (req, res) => {
+  try {
+    let { data, error } = await supabase
+      .from('recipes')
+      .select('id, ingredients, language, persona, response, created_at, likes')
+      .order('created_at', { ascending: false })
+      .limit(15);
+      
+    // Eğer likes sütunu henüz açılmamışsa Supabase hata verir. Bu durumda fallback (eski) yönteme geçelim.
+    if (error && error.message && error.message.toLowerCase().includes("does not exist")) {
+      const fallback = await supabase
+        .from('recipes')
+        .select('id, ingredients, language, persona, response, created_at')
+        .order('created_at', { ascending: false })
+        .limit(15);
+      data = fallback.data;
+      error = fallback.error;
+    }
+
+    if (error) throw error;
+    
+    res.status(200).json(data);
+  } catch (err) {
+    console.error("Discover API error:", err.message);
+    res.status(500).json({ error: 'Topluluk tarifleri getirilirken hata oluştu.' });
+  }
+});
+
+// Beğeni (Like) İşlemi
+app.post('/api/recipe/:id/like', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { isLiked } = req.body;
+
+    const { data: recipe, error: fetchError } = await supabase
+      .from('recipes')
+      .select('likes')
+      .eq('id', id)
+      .single();
+
+    if (fetchError) {
+      if (fetchError.message.toLowerCase().includes("does not exist")) {
+        return res.status(200).json({ success: true, fake: true, message: "Likes sütunu yok, sahte başarı" });
+      }
+      throw fetchError;
+    }
+
+    let currentLikes = recipe.likes || 0;
+    let newLikes = isLiked ? currentLikes + 1 : currentLikes - 1;
+    if (newLikes < 0) newLikes = 0;
+
+    const { error: updateError } = await supabase
+      .from('recipes')
+      .update({ likes: newLikes })
+      .eq('id', id);
+      
+    if (updateError) throw updateError;
+
+    res.status(200).json({ success: true, likes: newLikes });
+  } catch (err) {
+    console.error("Like API error:", err.message);
+    res.status(200).json({ success: true, fake: true, error: err.message });
+  }
+});
+
 app.post('/api/generateRecipe', recipeLimiter, async (req, res) => {
   const { ingredients, language = 'tr', persona = 'standart' } = req.body;
   if (!ingredients) {
