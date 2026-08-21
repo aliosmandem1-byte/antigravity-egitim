@@ -340,6 +340,12 @@ function initCustomDropdowns() {
 
 // --- Başlangıç Ayarları ---
 document.addEventListener('DOMContentLoaded', () => {
+  // --- TEST MODU HİLESİ (DEV MODE) ---
+  // Uygulama her açıldığında geliştiriciyi otomatik Premium yapar.
+  // Canlıya (Play Store'a) çıkarken bu satırı silebilirsiniz.
+  localStorage.setItem('aiSef_isPremium', 'true');
+  console.log("🛠️ Geliştirici Modu: Premium yetkileri aktif edildi.");
+  
   initSpeechRecognition();
   initCustomDropdowns();
   updateLanguage();
@@ -360,7 +366,8 @@ async function initRevenueCat() {
       if (typeof customerInfo.customerInfo.entitlements.active['premium'] !== "undefined") {
         localStorage.setItem('aiSef_isPremium', 'true');
       } else {
-        localStorage.setItem('aiSef_isPremium', 'false');
+        // TEST MODU AÇIK OLDUĞU İÇİN AŞAĞIDAKİ SATIR İPTAL EDİLDİ
+        // localStorage.setItem('aiSef_isPremium', 'false');
       }
     } catch(err) {
       console.log("RevenueCat init error", err);
@@ -1134,8 +1141,8 @@ function renderRecipeSteps() {
       <button class="back-btn" id="back-btn">←</button>
       <h2>${currentRecipe.title}</h2>
       <div style="display:flex; gap:8px;">
-        <button class="save-btn" id="publish-btn" style="background:var(--primary-color); color:white;" title="Keşfet'te Paylaş">
-          <span>🌍</span> <span id="publish-btn-text">Paylaş</span>
+        <button class="save-btn" id="publish-btn" style="background:#4F46E5; color:white; border:none; border-radius:20px; font-weight:bold;" title="Keşfet'te Paylaş">
+          <span>🌍</span> <span id="publish-btn-text" style="color:white;">Paylaş</span>
         </button>
         <button class="save-btn ${isSaved ? 'active' : ''}" id="save-btn" title="${isSaved ? translations[currentLang].savedBtnText : translations[currentLang].saveBtnText}">
           <span>${isSaved ? '🔖' : '📑'}</span> <span id="save-btn-text">${isSaved ? translations[currentLang].savedBtnText : translations[currentLang].saveBtnText}</span>
@@ -1210,7 +1217,7 @@ async function publishCurrentRecipe() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
-        ingredients: document.getElementById('ingredient-input') ? document.getElementById('ingredient-input').value : 'Topluluk Paylaşımı', 
+        ingredients: currentRecipe.desc || currentRecipe.title || 'Topluluk Tarifi', 
         language: currentLang, 
         persona: currentPersona, 
         recipe: currentRecipe 

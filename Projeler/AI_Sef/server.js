@@ -126,20 +126,18 @@ app.post('/api/recipe/publish', async (req, res) => {
       return res.status(400).json({ error: 'Eksik bilgi' });
     }
     
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('recipes')
       .insert([{
         ingredients: ingredients.toLowerCase().trim(),
         language: language || 'tr',
         persona: persona || 'standart',
         response: recipe
-      }])
-      .select('id')
-      .single();
+      }]);
       
     if (error) throw error;
     
-    res.status(200).json({ success: true, id: data.id });
+    res.status(200).json({ success: true });
   } catch(err) {
     console.error("Publish API error:", err.message);
     res.status(500).json({ error: 'Tarif paylaşılamadı' });
