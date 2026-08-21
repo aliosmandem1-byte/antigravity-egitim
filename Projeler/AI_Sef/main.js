@@ -1133,9 +1133,14 @@ function renderRecipeSteps() {
     <div class="recipe-header">
       <button class="back-btn" id="back-btn">←</button>
       <h2>${currentRecipe.title}</h2>
-      <button class="save-btn ${isSaved ? 'active' : ''}" id="save-btn" title="${isSaved ? translations[currentLang].savedBtnText : translations[currentLang].saveBtnText}">
-        <span>${isSaved ? '🔖' : '📑'}</span> <span id="save-btn-text">${isSaved ? translations[currentLang].savedBtnText : translations[currentLang].saveBtnText}</span>
-      </button>
+      <div style="display:flex; gap:8px;">
+        <button class="save-btn" id="publish-btn" style="background:var(--primary-color); color:white;" title="Keşfet'te Paylaş">
+          <span>🌍</span> <span id="publish-btn-text">Paylaş</span>
+        </button>
+        <button class="save-btn ${isSaved ? 'active' : ''}" id="save-btn" title="${isSaved ? translations[currentLang].savedBtnText : translations[currentLang].saveBtnText}">
+          <span>${isSaved ? '🔖' : '📑'}</span> <span id="save-btn-text">${isSaved ? translations[currentLang].savedBtnText : translations[currentLang].saveBtnText}</span>
+        </button>
+      </div>
     </div>
 
     ${currentRecipe.calories || currentRecipe.time ? badgesHTML : ''}
@@ -1161,6 +1166,7 @@ function renderRecipeSteps() {
 
   document.getElementById('back-btn').addEventListener('click', closeRecipe);
   document.getElementById('save-btn').addEventListener('click', toggleSaveCurrentRecipe);
+  document.getElementById('publish-btn').addEventListener('click', publishCurrentRecipe);
   document.getElementById('read-aloud-btn').addEventListener('click', toggleReadAloud);
   document.getElementById('prev-btn').addEventListener('click', () => changeStep(-1));
   document.getElementById('next-btn').addEventListener('click', () => {
@@ -1190,3 +1196,37 @@ function changeStep(direction) {
   }
 }
 
+async function publishCurrentRecipe() {
+  if (!currentRecipe) return;
+  const pubBtn = document.getElementById('publish-btn');
+  const pubText = document.getElementById('publish-btn-text');
+  if(pubBtn.disabled) return;
+
+  pubBtn.disabled = true;
+  pubText.innerText = "⏳";
+  
+  try {
+    const response = await fetch('https://kitchai.up.railway.app/api/recipe/publish', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        ingredients: document.getElementById('ingredient-input') ? document.getElementById('ingredient-input').value : 'Topluluk Paylaşımı', 
+        language: currentLang, 
+        persona: currentPersona, 
+        recipe: currentRecipe 
+      })
+    });
+    
+    if (!response.ok) throw new Error('Paylaşılamadı');
+    
+    pubText.innerText = "Paylaşıldı ✅";
+    pubBtn.style.background = "#4CAF50";
+  } catch(err) {
+    console.error(err);
+    pubText.innerText = "Hata ❌";
+    setTimeout(() => {
+      pubBtn.disabled = false;
+      pubText.innerText = "Paylaş";
+    }, 2000);
+  }
+}

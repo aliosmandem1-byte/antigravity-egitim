@@ -117,6 +117,35 @@ app.post('/api/recipe/:id/like', async (req, res) => {
   }
 });
 
+// Tarifi Toplulukta Paylaş (Manuel Publish)
+app.post('/api/recipe/publish', async (req, res) => {
+  try {
+    const { ingredients, language, persona, recipe } = req.body;
+    
+    if (!recipe || !ingredients) {
+      return res.status(400).json({ error: 'Eksik bilgi' });
+    }
+    
+    const { data, error } = await supabase
+      .from('recipes')
+      .insert([{
+        ingredients: ingredients.toLowerCase().trim(),
+        language: language || 'tr',
+        persona: persona || 'standart',
+        response: recipe
+      }])
+      .select('id')
+      .single();
+      
+    if (error) throw error;
+    
+    res.status(200).json({ success: true, id: data.id });
+  } catch(err) {
+    console.error("Publish API error:", err.message);
+    res.status(500).json({ error: 'Tarif paylaşılamadı' });
+  }
+});
+
 app.post('/api/generateRecipe', recipeLimiter, async (req, res) => {
   const { ingredients, language = 'tr', persona = 'standart' } = req.body;
   if (!ingredients) {
@@ -237,7 +266,9 @@ DİKKAT: Çıktı sadece ve sadece aşağıdaki formatta saf JSON olmalı, baş�
     
     const recipeData = JSON.parse(jsonMatch[0]);
 
-    // 2. Üretilen yeni tarifi gelecekteki kullanımlar için Supabase'e kaydet
+    // 2. Üretilen yeni tarifi gelecekteki kullanımlar için Supabase'e kaydet (İPTAL EDİLDİ)
+    // Artık sadece kullanıcı manuel paylaştığında (/api/recipe/publish) kaydedilecek.
+    /*
     try {
       const { error: insertError } = await supabase
         .from('recipes')
@@ -254,8 +285,9 @@ DİKKAT: Çıktı sadece ve sadece aşağıdaki formatta saf JSON olmalı, baş�
         console.log("💾 Veritabanına yeni tarif kaydedildi:", cleanIngredients);
       }
     } catch (err) {
-      console.log("Supabase insert try-catch hatası:", err.message);
+      console.log("Supabase trycatch hatası:", err.message);
     }
+    */
 
     // Frontend'in beklediği eski formata uyum sağlamak için SDK verisini simüle et
     res.status(200).json({
