@@ -912,7 +912,6 @@ async function fetchDiscoverRecipes() {
       discoverCards.innerHTML = '';
       data.forEach(item => {
         const recipe = item.response;
-        if (!recipe.id) recipe.id = item.id;
         
         const card = document.createElement('div');
         card.className = 'recipe-card';
@@ -939,12 +938,12 @@ async function fetchDiscoverRecipes() {
           </div>
           <div class="social-actions" style="position: absolute; right: 16px; bottom: 16px; display: flex; align-items: center; gap: 12px; z-index: 10;">
             <div class="comment-btn-container" style="display: flex; align-items: center; justify-content: center; cursor: pointer; gap: 4px;">
-              <button class="comment-btn" data-id="${recipe.id}" style="background:none; border:none; font-size:1.4rem; transition: transform 0.2s;" title="Yorumlar">💬</button>
+              <button class="comment-btn" data-id="${item.id}" style="background:none; border:none; font-size:1.4rem; transition: transform 0.2s;" title="Yorumlar">💬</button>
               <span class="comment-count" style="font-weight: 600; font-size: 0.95rem; color: var(--text-muted);">${item.comments_count || 0}</span>
             </div>
             <div class="like-btn-container" style="display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
               <span class="like-count" style="font-weight: 600; font-size: 0.95rem; color: var(--text-muted);">${item.likes || 0}</span>
-              <button class="like-btn ${isLiked ? 'liked' : ''}" data-id="${recipe.id}" style="background:none; border:none; font-size:1.4rem; transition: transform 0.2s;">
+              <button class="like-btn ${isLiked ? 'liked' : ''}" data-id="${item.id}" style="background:none; border:none; font-size:1.4rem; transition: transform 0.2s;">
                 ${isLiked ? '❤️' : '🤍'}
               </button>
             </div>
@@ -961,7 +960,7 @@ async function fetchDiscoverRecipes() {
           if (likeBtn.classList.contains('liked')) {
             likeBtn.classList.remove('liked');
             likeBtn.innerHTML = '🤍';
-            likes = likes.filter(id => id !== recipe.id);
+            likes = likes.filter(id => id !== item.id);
             isAdding = false;
             countSpan.innerText = Math.max(0, parseInt(countSpan.innerText) - 1);
           } else {
@@ -969,13 +968,13 @@ async function fetchDiscoverRecipes() {
             likeBtn.innerHTML = '❤️';
             likeBtn.style.transform = 'scale(1.3)';
             setTimeout(() => likeBtn.style.transform = 'scale(1)', 200);
-            if (!likes.includes(recipe.id)) likes.push(recipe.id);
+            if (!likes.includes(item.id)) likes.push(item.id);
             countSpan.innerText = parseInt(countSpan.innerText) + 1;
           }
           localStorage.setItem('aiSef_likedRecipes', JSON.stringify(likes));
 
           try {
-            await fetch(`https://kitchai.up.railway.app/api/recipe/${recipe.id}/like`, {
+            await fetch(`https://kitchai.up.railway.app/api/recipe/${item.id}/like`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ isLiked: isAdding })
@@ -988,11 +987,12 @@ async function fetchDiscoverRecipes() {
         const commentBtn = card.querySelector('.comment-btn');
         commentBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          openCommentsModal(recipe.id);
+          openCommentsModal(item.id);
         });
 
         card.addEventListener('click', () => {
           discoverView.classList.add('hidden');
+          recipe.id = item.id; // Okuma sayfasında hata vermemesi için
           openRecipe(recipe);
         });
 
