@@ -72,11 +72,13 @@ const translations = {
     guideBtn: "📖 Nasıl Kullanılır?",
     guideTitle: "📖 KitchAI Nasıl Kullanılır?",
     guideStep1Title: "1. Malzemelerini Yaz veya Söyle",
-    guideStep1Desc: "İster yaz, ister mikrofon (🎤) tuşuna basıp sesli söyle.",
+    guideStep1Desc: "İster yaz, ister mikrofon (🎤) tuşuna basılı tutarak sesli söyle.",
     guideStep2Title: "2. Şefini Seç",
     guideStep2Desc: "Farklı karakterlerde şefler seç.",
     guideStep3Title: "3. Dinle ve Pişir",
     guideStep3Desc: "AI tarifi anlatsın, sen pişir!",
+    guideStep4Title: "4. Keşfet ve Paylaş",
+    guideStep4Desc: "Yaptığın yemeği fotoğrafla, adını yaz ve toplulukla paylaş!",
     guideFakeInput: "Tavuk, Krema, Mantar",
     guideFakeSelect: "🤬 Sinirli Şef (Ramsay)"
   },
@@ -100,11 +102,13 @@ const translations = {
     guideBtn: "📖 How to Use?",
     guideTitle: "📖 How to Use KitchAI?",
     guideStep1Title: "1. Type or Say Ingredients",
-    guideStep1Desc: "Type them or use the mic (🎤) to speak.",
+    guideStep1Desc: "Type them or hold the mic (🎤) to speak.",
     guideStep2Title: "2. Choose a Chef",
     guideStep2Desc: "Select different chef personas.",
     guideStep3Title: "3. Listen & Cook",
     guideStep3Desc: "Let AI narrate, you cook!",
+    guideStep4Title: "4. Discover & Share",
+    guideStep4Desc: "Take a photo of your dish, add your name, and share it with the community!",
     guideFakeInput: "Chicken, Cream, Mushroom",
     guideFakeSelect: "🤬 Angry Chef (Ramsay)"
   },
@@ -128,11 +132,13 @@ const translations = {
     guideBtn: "📖 Wie benutzt man es?",
     guideTitle: "📖 Wie man KitchAI benutzt?",
     guideStep1Title: "1. Zutaten schreiben oder sagen",
-    guideStep1Desc: "Schreibe sie oder sprich ins Mikrofon (🎤).",
+    guideStep1Desc: "Schreibe sie oder halte das Mikrofon (🎤) gedrückt.",
     guideStep2Title: "2. Koch auswählen",
     guideStep2Desc: "Wähle verschiedene Köche.",
     guideStep3Title: "3. Hören & Kochen",
     guideStep3Desc: "Lass die KI erzählen, du kochst!",
+    guideStep4Title: "4. Entdecken und Teilen",
+    guideStep4Desc: "Fotografiere dein Gericht, füge deinen Namen hinzu und teile es mit der Community!",
     guideFakeInput: "Hähnchen, Sahne, Pilze",
     guideFakeSelect: "🤬 Wütender Koch"
   },
@@ -156,12 +162,14 @@ const translations = {
     guideBtn: "📖 ¿Cómo usar?",
     guideTitle: "📖 ¿Cómo usar KitchAI?",
     guideStep1Title: "1. Escribe o di ingredientes",
-    guideStep1Desc: "Escríbelos o usa el micrófono (🎤) para hablar.",
-    guideStep2Title: "2. Elige un chef",
-    guideStep2Desc: "Selecciona diferentes chefs.",
-    guideStep3Title: "3. Escucha y cocina",
-    guideStep3Desc: "¡Deja que la IA narre y cocina!",
-    guideFakeInput: "Pollo, Crema, Champiñones",
+    guideStep1Desc: "Escribe o mantén presionado el micrófono (🎤) para hablar.",
+    guideStep2Title: "2. Elige un Chef",
+    guideStep2Desc: "Selecciona diferentes personas.",
+    guideStep3Title: "3. Escucha y Cocina",
+    guideStep3Desc: "¡Deja que la IA narre, tú cocinas!",
+    guideStep4Title: "4. Descubre y Comparte",
+    guideStep4Desc: "¡Fotografía tu comida, ponle tu nombre y compártela con la comunidad!",
+    guideFakeInput: "Pollo, Crema, Champiñón",
     guideFakeSelect: "🤬 Chef Enojado"
   }
 };
@@ -340,11 +348,7 @@ function initCustomDropdowns() {
 
 // --- Başlangıç Ayarları ---
 document.addEventListener('DOMContentLoaded', () => {
-  // --- TEST MODU HİLESİ (DEV MODE) ---
-  // Uygulama her açıldığında geliştiriciyi otomatik Premium yapar.
-  // Canlıya (Play Store'a) çıkarken bu satırı silebilirsiniz.
-  localStorage.setItem('aiSef_isPremium', 'true');
-  console.log("🛠️ Geliştirici Modu: Premium yetkileri aktif edildi.");
+
   
   initSpeechRecognition();
   initCustomDropdowns();
@@ -366,8 +370,7 @@ async function initRevenueCat() {
       if (typeof customerInfo.customerInfo.entitlements.active['premium'] !== "undefined") {
         localStorage.setItem('aiSef_isPremium', 'true');
       } else {
-        // TEST MODU AÇIK OLDUĞU İÇİN AŞAĞIDAKİ SATIR İPTAL EDİLDİ
-        // localStorage.setItem('aiSef_isPremium', 'false');
+        localStorage.setItem('aiSef_isPremium', 'false');
       }
     } catch(err) {
       console.log("RevenueCat init error", err);
@@ -946,7 +949,7 @@ async function fetchDiscoverRecipes() {
         }
 
         let likedRecipes = JSON.parse(localStorage.getItem('aiSef_likedRecipes') || '[]');
-        const isLiked = likedRecipes.includes(recipe.id);
+        const isLiked = likedRecipes.includes(item.id);
         
         let authorHtml = '';
         if (item.author_name) {
