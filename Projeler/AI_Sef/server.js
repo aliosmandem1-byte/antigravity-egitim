@@ -56,12 +56,13 @@ app.get('/api/discover', async (req, res) => {
   try {
     let { data, error } = await supabase
       .from('recipes')
-      .select('id, ingredients, language, persona, response, created_at, likes')
+      .select('id, ingredients, language, persona, response, created_at, likes, image_data, user_caption, author_name')
       .order('created_at', { ascending: false })
       .limit(15);
       
-    // Eğer likes sütunu henüz açılmamışsa Supabase hata verir. Bu durumda fallback (eski) yönteme geçelim.
+    // Eğer likes, image_data vb. sütunlar henüz açılmamışsa Supabase hata verir. Fallback yöntem:
     if (error && error.message && error.message.toLowerCase().includes("does not exist")) {
+      console.warn("Bazı sütunlar yok, fallback yapılıyor...");
       const fallback = await supabase
         .from('recipes')
         .select('id, ingredients, language, persona, response, created_at')
@@ -144,22 +145,42 @@ app.post('/api/recipe/:id/like', async (req, res) => {
 // Tarifi Toplulukta Paylaş (Manuel Publish)
 app.post('/api/recipe/publish', async (req, res) => {
   try {
-    const { ingredients, language, persona, recipe } = req.body;
+    const { ingredients, language, persona, recipe, image_data, user_caption, author_name } = req.body;
     
     if (!recipe || !ingredients) {
       return res.status(400).json({ error: 'Eksik bilgi' });
     }
     
+    // Yalnızca eklenmişse görsel ve açıklamayı gönder
+    const insertData = {
+      ingredients: ingredients.toLowerCase().trim(),
+      language: language || 'tr',
+      persona: persona || 'standart',
+      response: recipe
+    };
+
+    if (image_data) insertData.image_data = image_data;
+    if (user_caption) insertData.user_caption = user_caption;
+    if (author_name) insertData.author_name = author_name;
+    
     const { error } = await supabase
       .from('recipes')
-      .insert([{
-        ingredients: ingredients.toLowerCase().trim(),
-        language: language || 'tr',
-        persona: persona || 'standart',
-        response: recipe
-      }]);
+      .insert([insertData]);
       
-    if (error) throw error;
+    if (error) {
+       // Sütun yoksa (Kullanıcı henüz db'ye eklemediyse) sadece temeli kaydet
+       if (error.message.toLowerCase().includes('does not exist')) {
+           const fallbackData = {
+             ingredients: ingredients.toLowerCase().trim(),
+             language: language || 'tr',
+             persona: persona || 'standart',
+             response: recipe
+           };
+           await supabase.from('recipes').insert([fallbackData]);
+       } else {
+           throw error;
+       }
+    }
     
     res.status(200).json({ success: true });
   } catch(err) {

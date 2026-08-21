@@ -833,10 +833,28 @@ function initSpeechRecognition() {
           changeStep(-1);
         }
       }
+      
+      // Stop recognition after a command is heard (Push to talk behavior)
+      recognition.stop();
+    };
+    
+    recognition.onstart = function() {
+      const micBtnStep = document.getElementById('mic-btn-step');
+      const micStatusText = document.getElementById('mic-status-text');
+      if(micBtnStep) micBtnStep.classList.add('listening');
+      if(micStatusText) micStatusText.innerText = 'Dinliyor...';
+    }
+    
+    recognition.onend = function() {
+      const micBtnStep = document.getElementById('mic-btn-step');
+      const micStatusText = document.getElementById('mic-status-text');
+      if(micBtnStep) micBtnStep.classList.remove('listening');
+      if(micStatusText) micStatusText.innerText = 'Dinle';
     };
 
     recognition.onerror = function(event) {
       console.error("Speech Recognition Hata:", event.error);
+      recognition.stop();
     };
 
     // Dictation (Voice Input for ingredients)
@@ -929,11 +947,38 @@ async function fetchDiscoverRecipes() {
 
         let likedRecipes = JSON.parse(localStorage.getItem('aiSef_likedRecipes') || '[]');
         const isLiked = likedRecipes.includes(recipe.id);
+        
+        let authorHtml = '';
+        if (item.author_name) {
+          authorHtml = `
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: bold; color: white;">
+                ${item.author_name.charAt(0).toUpperCase()}
+              </div>
+              <span style="font-weight: 600; font-size: 0.95rem;">${item.author_name}</span>
+            </div>
+          `;
+        }
+        
+        let postMediaHtml = '';
+        if (item.image_data) {
+          postMediaHtml = `<div class="recipe-image-container" style="margin-bottom: 12px; border-radius: 12px; overflow: hidden; height: 200px;">
+            <img src="${item.image_data}" alt="Kullanıcı Görseli" style="width: 100%; height: 100%; object-fit: cover;" />
+          </div>`;
+        }
+        
+        let userCaptionHtml = '';
+        if (item.user_caption) {
+          userCaptionHtml = `<p style="font-weight: 500; font-style: italic; color: var(--text-main); margin-bottom: 8px; font-size: 0.95rem;">"${item.user_caption}"</p>`;
+        }
 
         card.innerHTML = `
+          ${authorHtml}
+          ${postMediaHtml}
           <div class="info">
             <h4>${recipe.title}</h4>
-            <p>${recipe.desc || 'Yapay Zeka Tarifi'}</p>
+            ${userCaptionHtml}
+            <p style="font-size: 0.85rem; color: var(--text-muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${recipe.desc || 'Yapay Zeka Tarifi'}</p>
             ${miniBadges}
           </div>
           <div class="social-actions" style="position: absolute; right: 16px; bottom: 16px; display: flex; align-items: center; gap: 12px; z-index: 10;">
@@ -1078,13 +1123,7 @@ function openRecipe(recipe) {
   
   renderRecipeSteps();
 
-  if (recognition) {
-    try {
-      recognition.start();
-    } catch(e) {
-      console.log("Recognition zaten çalışıyor veya başlatılamadı.");
-    }
-  }
+  renderRecipeSteps();
 }
 
 function closeRecipe() {
@@ -1133,7 +1172,11 @@ function renderRecipeSteps() {
   const isFirstStep = currentStepIndex === 0;
   const isSaved = isRecipeSaved(currentRecipe.title);
 
-  const micBadgeHTML = recognition ? '<div class="mic-badge listening" title="Sesli Komut Açık">🎙️ Dinliyor</div>' : '';
+  const micBadgeHTML = recognition ? `
+    <button class="mic-btn-step" id="mic-btn-step" title="Bas ve Konuş (İleri/Geri)">
+      🎤 <span id="mic-status-text">Dinle</span>
+    </button>
+  ` : '';
 
   const badgesHTML = `
     <div class="recipe-badges">
@@ -1143,13 +1186,11 @@ function renderRecipeSteps() {
     </div>
   `;
 
-  const imageHtml = '';
-
   recipeView.innerHTML = `
     <div class="recipe-header">
       <button class="back-btn" id="back-btn">←</button>
       <h2>${currentRecipe.title}</h2>
-      <div style="display:flex; gap:8px;">
+      <div class="recipe-header-actions">
         <button class="save-btn" id="publish-btn" style="background:#4F46E5; color:white; border:none; border-radius:20px; font-weight:bold;" title="Keşfet'te Paylaş">
           <span>🌍</span> <span id="publish-btn-text" style="color:white;">Paylaş</span>
         </button>
@@ -1162,12 +1203,14 @@ function renderRecipeSteps() {
     ${currentRecipe.calories || currentRecipe.time ? badgesHTML : ''}
     
     <div class="step-container">
-      <div class="step-badge">Adım ${currentStepIndex + 1} / ${totalSteps}</div>
-      ${micBadgeHTML}
-      
-      <button class="read-aloud-btn ${isReadAloudActive ? 'active' : ''}" id="read-aloud-btn">
-        ${isReadAloudActive ? '🔇 Asistanı Sustur' : '🔊 Bana Oku'}
-      </button>
+      <div class="step-top-bar">
+        <div class="step-badge">Adım ${currentStepIndex + 1} / ${totalSteps}</div>
+        ${micBadgeHTML}
+        
+        <button class="read-aloud-btn ${isReadAloudActive ? 'active' : ''}" id="read-aloud-btn">
+          ${isReadAloudActive ? '🔇 Sustur' : '🔊 Oku'}
+        </button>
+      </div>
 
       <div class="step-content" id="step-content">
         ${currentRecipe.steps[currentStepIndex]}
@@ -1182,7 +1225,24 @@ function renderRecipeSteps() {
 
   document.getElementById('back-btn').addEventListener('click', closeRecipe);
   document.getElementById('save-btn').addEventListener('click', toggleSaveCurrentRecipe);
-  document.getElementById('publish-btn').addEventListener('click', publishCurrentRecipe);
+  document.getElementById('publish-btn').addEventListener('click', () => {
+    // Show the new share modal instead of direct publishing
+    openShareModal();
+  });
+  
+  const micBtnStep = document.getElementById('mic-btn-step');
+  if (micBtnStep) {
+    micBtnStep.addEventListener('click', () => {
+      if (recognition) {
+        try {
+          recognition.start();
+        } catch(e) {
+          recognition.stop(); // If already running, stop it
+        }
+      }
+    });
+  }
+  
   document.getElementById('read-aloud-btn').addEventListener('click', toggleReadAloud);
   document.getElementById('prev-btn').addEventListener('click', () => changeStep(-1));
   document.getElementById('next-btn').addEventListener('click', () => {
@@ -1213,38 +1273,125 @@ function changeStep(direction) {
 }
 
 async function publishCurrentRecipe() {
-  if (!currentRecipe) return;
-  const pubBtn = document.getElementById('publish-btn');
-  const pubText = document.getElementById('publish-btn-text');
-  if(pubBtn.disabled) return;
+  // Now handled through openShareModal / confirmShare
+}
 
-  pubBtn.disabled = true;
-  pubText.innerText = "⏳";
-  
-  try {
-    const response = await fetch('https://kitchai.up.railway.app/api/recipe/publish', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        ingredients: currentRecipe.desc || currentRecipe.title || 'Topluluk Tarifi', 
-        language: currentLang, 
-        persona: currentPersona, 
-        recipe: currentRecipe 
-      })
-    });
+// --- Share Modal (Instagram style) ---
+const shareModal = document.getElementById('share-modal');
+const closeShareBtn = document.getElementById('close-share');
+const shareImageInput = document.getElementById('share-image-input');
+const shareImagePreview = document.getElementById('share-image-preview');
+const imageUploadText = document.getElementById('image-upload-text');
+const shareCaptionInput = document.getElementById('share-caption-input');
+const shareAuthorInput = document.getElementById('share-author-input');
+const confirmShareBtn = document.getElementById('confirm-share-btn');
+let currentShareBase64 = null;
+
+function openShareModal() {
+  if (!currentRecipe) return;
+  shareModal.classList.remove('hidden');
+  currentShareBase64 = null;
+  shareImagePreview.src = '';
+  shareImagePreview.style.display = 'none';
+  imageUploadText.style.display = 'block';
+  shareCaptionInput.value = '';
+  if (shareAuthorInput) shareAuthorInput.value = '';
+}
+
+if (closeShareBtn) {
+  closeShareBtn.addEventListener('click', () => {
+    shareModal.classList.add('hidden');
+  });
+}
+
+if (shareImageInput) {
+  shareImageInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const img = new Image();
+      img.onload = function() {
+        // Resize image to max 800px width/height to save DB space
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 800;
+        const MAX_HEIGHT = 800;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        currentShareBase64 = canvas.toDataURL('image/jpeg', 0.8);
+        shareImagePreview.src = currentShareBase64;
+        shareImagePreview.style.display = 'block';
+        imageUploadText.style.display = 'none';
+      }
+      img.src = event.target.result;
+    }
+    reader.readAsDataURL(file);
+  });
+}
+
+if (confirmShareBtn) {
+  confirmShareBtn.addEventListener('click', async () => {
+    if (!currentRecipe) return;
     
-    if (!response.ok) throw new Error('Paylaşılamadı');
+    confirmShareBtn.disabled = true;
+    confirmShareBtn.innerText = "⏳ Yükleniyor...";
     
-    pubText.innerText = "Paylaşıldı ✅";
-    pubBtn.style.background = "#4CAF50";
-  } catch(err) {
-    console.error(err);
-    pubText.innerText = "Hata ❌";
-    setTimeout(() => {
-      pubBtn.disabled = false;
-      pubText.innerText = "Paylaş";
-    }, 2000);
-  }
+    try {
+      const response = await fetch('https://kitchai.up.railway.app/api/recipe/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          ingredients: currentRecipe.desc || currentRecipe.title || 'Topluluk Tarifi', 
+          language: currentLang, 
+          persona: currentPersona, 
+          recipe: currentRecipe,
+          image_data: currentShareBase64,
+          user_caption: shareCaptionInput.value.trim(),
+          author_name: shareAuthorInput ? shareAuthorInput.value.trim() : ''
+        })
+      });
+      
+      if (!response.ok) throw new Error('Paylaşılamadı');
+      
+      confirmShareBtn.innerText = "Paylaşıldı ✅";
+      setTimeout(() => {
+        shareModal.classList.add('hidden');
+        confirmShareBtn.disabled = false;
+        confirmShareBtn.innerText = "Gönderiyi Paylaş";
+      }, 1500);
+      
+      const pubBtn = document.getElementById('publish-btn');
+      const pubText = document.getElementById('publish-btn-text');
+      if(pubBtn && pubText) {
+        pubBtn.disabled = true;
+        pubBtn.style.background = "#4CAF50";
+        pubText.innerText = "Paylaşıldı";
+      }
+      
+    } catch(err) {
+      console.error(err);
+      confirmShareBtn.innerText = "Hata ❌ Tekrar Dene";
+      confirmShareBtn.disabled = false;
+    }
+  });
 }
 // --- Yorumlar Modalı (Comments) ---
 const commentsModal = document.getElementById('comments-modal');

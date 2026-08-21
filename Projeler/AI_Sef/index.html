@@ -178,6 +178,28 @@
       </div>
     </div>
 
+    <!-- Paylaşım Modalı -->
+    <div id="share-modal" class="modal hidden">
+      <div class="modal-content glass-container dark-modal" style="text-align: center;">
+        <span id="close-share" class="close-btn">&times;</span>
+        <h2 style="margin-bottom: 20px;">🌍 Tarifini Paylaş</h2>
+        
+        <div class="share-form" style="display:flex; flex-direction:column; gap:16px; text-align:left;">
+          <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 2px dashed rgba(255,255,255,0.3); text-align: center; cursor: pointer; position: relative; overflow: hidden;" id="image-upload-area">
+            <span id="image-upload-text" style="color: rgba(255,255,255,0.9); font-size: 0.95rem;">📸 Yemeğin fotoğrafını yükle (İsteğe Bağlı)</span>
+            <input type="file" id="share-image-input" accept="image/*" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" />
+            <img id="share-image-preview" src="" alt="Önizleme" style="display:none; width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-top: 10px;" />
+          </div>
+          
+          <input type="text" id="share-author-input" placeholder="Adınız (Örn: Ali)" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #ffffff; font-family: var(--font-body);" />
+          
+          <textarea id="share-caption-input" placeholder="Bu tarif hakkında ne düşünüyorsunuz?" rows="3" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #ffffff; font-family: var(--font-body); resize: vertical;"></textarea>
+          
+          <button id="confirm-share-btn" class="primary-btn" style="width: 100%; margin-top: 10px;">Gönderiyi Paylaş</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Yorumlar Modalı -->
     <div id="comments-modal" class="comments-modal">
       <div class="comments-container">
@@ -198,6 +220,6 @@
       </div>
     </div>
 
-    <script type="module" src="/main.js?v=5"></script>
+    <script type="module" src="/main.js?v=6"></script>
   </body>
 </html>

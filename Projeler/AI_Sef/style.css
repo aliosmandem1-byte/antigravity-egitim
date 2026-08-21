@@ -583,10 +583,30 @@ input[type="text"]:focus, input[type="password"]:focus {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 16px;
+  justify-content: space-between;
+  gap: 12px;
   margin-bottom: 30px;
   border-bottom: 1px solid var(--glass-border);
   padding-bottom: 20px;
+}
+
+.recipe-header h2 {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  flex: 1 1 100%;
+  text-align: left;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.recipe-header-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .recipe-image-container {
@@ -654,16 +674,7 @@ input[type="text"]:focus, input[type="password"]:focus {
   color: var(--secondary-accent);
 }
 
-.recipe-header h2 {
-  font-family: var(--font-heading);
-  font-size: 1.5rem;
-  flex: 1;
-  background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-}
+/* Recipe header h2 is moved up */
 
 .save-btn {
   background: rgba(139, 92, 246, 0.05);
@@ -749,12 +760,10 @@ input[type="text"]:focus, input[type="password"]:focus {
   background: rgba(0, 0, 0, 0.02);
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 16px;
-  padding: 30px;
+  padding: 20px;
   min-height: 250px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
   text-align: center;
   margin-bottom: 24px;
   position: relative;
@@ -763,44 +772,45 @@ input[type="text"]:focus, input[type="password"]:focus {
   color: #1c1917;
 }
 
+.step-top-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
 .step-badge {
-  position: absolute;
-  top: 16px;
-  left: 16px;
   background: var(--primary-accent);
   color: white;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 700;
-  padding: 4px 12px;
+  padding: 6px 14px;
   border-radius: 20px;
   font-family: var(--font-heading);
 }
 
-.mic-badge {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background: rgba(139, 92, 246, 0.5); /* Violet transparan */
-  color: white;
-  font-size: 1rem;
-  padding: 4px 8px;
+.mic-btn-step {
+  background: rgba(139, 92, 246, 0.1);
+  color: var(--secondary-accent);
+  border: 1px solid var(--secondary-accent);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 6px 14px;
   border-radius: 20px;
   display: flex;
   align-items: center;
   gap: 6px;
-  border: 1px solid var(--secondary-accent);
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.mic-badge.listening {
+.mic-btn-step.listening {
   background: var(--primary-accent);
   border-color: var(--primary-accent);
+  color: white;
   animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.7); }
-  70% { box-shadow: 0 0 0 10px rgba(244, 63, 94, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
 }
 
 .read-aloud-btn {
