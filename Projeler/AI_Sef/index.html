@@ -176,8 +176,28 @@
           </button>
         </div>
       </div>
-
     </div>
+
+    <!-- Yorumlar Modalı -->
+    <div id="comments-modal" class="comments-modal">
+      <div class="comments-container">
+        <div class="comments-header">
+          <h3>💬 Yorumlar</h3>
+          <button id="close-comments-btn" class="close-comments-btn">&times;</button>
+        </div>
+        
+        <div id="comments-list" class="comments-list">
+          <!-- Yorumlar buraya JS ile basılacak -->
+        </div>
+
+        <div class="comment-input-area">
+          <input type="text" id="comment-author-input" placeholder="Adınız (Örn: Ali Şef)" />
+          <textarea id="comment-text-input" placeholder="Bu tarif hakkında ne düşünüyorsunuz? (Örn: Denedim harika oldu!)"></textarea>
+          <button id="submit-comment-btn" class="comment-submit-btn">Gönder</button>
+        </div>
+      </div>
+    </div>
+
     <script type="module" src="/main.js?v=3"></script>
   </body>
 </html>

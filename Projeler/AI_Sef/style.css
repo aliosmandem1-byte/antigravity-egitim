@@ -1428,4 +1428,22 @@ input[type="text"]::placeholder, input[type="password"]::placeholder {
 }
 
 
-
+/* YORUM MODALI */
+.comments-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: flex-end; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+.comments-modal.active { opacity: 1; pointer-events: auto; }
+.comments-container { background: white; width: 100%; max-width: 600px; height: 80vh; border-radius: 24px 24px 0 0; padding: 20px; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.3s ease; box-shadow: 0 -10px 20px rgba(0,0,0,0.1); }
+.comments-modal.active .comments-container { transform: translateY(0); }
+.comments-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+.comments-header h3 { margin: 0; font-size: 1.2rem; color: #333; }
+.close-comments-btn { background: #f1f1f1; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #555; }
+.comments-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px; }
+.comment-bubble { background: #f8fafc; padding: 12px; border-radius: 16px; border: 1px solid #e2e8f0; }
+.comment-author { font-weight: bold; font-size: 0.9rem; color: #4f46e5; margin-bottom: 4px; }
+.comment-text { font-size: 0.95rem; color: #334155; line-height: 1.4; }
+.comment-date { font-size: 0.75rem; color: #94a3b8; text-align: right; margin-top: 5px; }
+.comment-input-area { display: flex; flex-direction: column; gap: 8px; background: #fff; border-top: 1px solid #eee; padding-top: 15px; }
+.comment-input-area input { padding: 10px 15px; border-radius: 20px; border: 1px solid #cbd5e1; font-size: 0.9rem; outline: none; }
+.comment-input-area textarea { padding: 12px 15px; border-radius: 16px; border: 1px solid #cbd5e1; font-size: 0.95rem; outline: none; resize: none; height: 80px; font-family: inherit; }
+.comment-submit-btn { background: #4f46e5; color: white; border: none; border-radius: 20px; padding: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+.comment-submit-btn:active { transform: scale(0.98); }
+.comment-submit-btn:disabled { background: #cbd5e1; cursor: not-allowed; }

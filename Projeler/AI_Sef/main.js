@@ -937,6 +937,11 @@ async function fetchDiscoverRecipes() {
             <p>${recipe.desc || 'Yapay Zeka Tarifi'}</p>
             ${miniBadges}
           </div>
+          <div class="card-action comment-btn-container" style="right: 120px; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+            <button class="comment-btn" data-id="${recipe.id}" style="background:none; border:none; font-size:1.5rem; transition: transform 0.2s;" title="Yorumlar">
+              💬
+            </button>
+          </div>
           <div class="card-action like-btn-container" style="right: 60px; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">
             <span class="like-count" style="font-weight: 600; font-size: 0.95rem; color: var(--text-muted);">${item.likes || 0}</span>
             <button class="like-btn ${isLiked ? 'liked' : ''}" data-id="${recipe.id}" style="background:none; border:none; font-size:1.5rem; transition: transform 0.2s;">
@@ -980,6 +985,12 @@ async function fetchDiscoverRecipes() {
           } catch(err) {
             console.error("Like backend hatası", err);
           }
+        });
+
+        const commentBtn = card.querySelector('.comment-btn');
+        commentBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openCommentsModal(recipe.id);
         });
 
         card.addEventListener('click', () => {
@@ -1235,5 +1246,81 @@ async function publishCurrentRecipe() {
       pubBtn.disabled = false;
       pubText.innerText = "Paylaş";
     }, 2000);
+  }
+}
+// --- Yorumlar Modalı (Comments) ---
+const commentsModal = document.getElementById('comments-modal');
+const closeCommentsBtn = document.getElementById('close-comments-btn');
+const commentsList = document.getElementById('comments-list');
+const submitCommentBtn = document.getElementById('submit-comment-btn');
+const commentAuthorInput = document.getElementById('comment-author-input');
+const commentTextInput = document.getElementById('comment-text-input');
+let currentCommentRecipeId = null;
+
+if (closeCommentsBtn) {
+  closeCommentsBtn.addEventListener('click', () => {
+    commentsModal.classList.remove('active');
+  });
+}
+
+if (submitCommentBtn) {
+  submitCommentBtn.addEventListener('click', async () => {
+    const author = commentAuthorInput.value.trim() || 'Misafir Şef';
+    const text = commentTextInput.value.trim();
+    if (!text || !currentCommentRecipeId) return;
+
+    submitCommentBtn.disabled = true;
+    submitCommentBtn.innerText = 'Gönderiliyor...';
+
+    try {
+      const response = await fetch(`https://kitchai.up.railway.app/api/recipe/${currentCommentRecipeId}/comment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ author_name: author, comment_text: text })
+      });
+      if (!response.ok) throw new Error('Hata');
+      commentTextInput.value = '';
+      loadComments(currentCommentRecipeId); // Yeniden yükle
+    } catch (err) {
+      alert('Yorum gönderilemedi. Lütfen tekrar deneyin.');
+    } finally {
+      submitCommentBtn.disabled = false;
+      submitCommentBtn.innerText = 'Gönder';
+    }
+  });
+}
+
+function openCommentsModal(recipeId) {
+  currentCommentRecipeId = recipeId;
+  commentsModal.classList.add('active');
+  loadComments(recipeId);
+}
+
+async function loadComments(recipeId) {
+  commentsList.innerHTML = '<div style="text-align:center; padding: 20px;">Yükleniyor...</div>';
+  try {
+    const response = await fetch(`https://kitchai.up.railway.app/api/recipe/${recipeId}/comments`);
+    if (!response.ok) throw new Error('Hata');
+    const comments = await response.json();
+    
+    if (comments.length === 0) {
+      commentsList.innerHTML = '<div style="text-align:center; padding: 20px; color: #666;">İlk yorumu siz yapın! 💬</div>';
+      return;
+    }
+
+    commentsList.innerHTML = '';
+    comments.forEach(c => {
+      const date = new Date(c.created_at).toLocaleDateString('tr-TR', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+      const cDiv = document.createElement('div');
+      cDiv.className = 'comment-bubble';
+      cDiv.innerHTML = `
+        <div class="comment-author">${c.author_name}</div>
+        <div class="comment-text">${c.comment_text}</div>
+        <div class="comment-date">${date}</div>
+      `;
+      commentsList.appendChild(cDiv);
+    });
+  } catch (err) {
+    commentsList.innerHTML = '<div style="text-align:center; padding: 20px; color: red;">Yorumlar alınamadı.</div>';
   }
 }

@@ -144,6 +144,53 @@ app.post('/api/recipe/publish', async (req, res) => {
   }
 });
 
+// Yorum Ekleme (POST)
+app.post('/api/recipe/:id/comment', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { author_name, comment_text } = req.body;
+    
+    if (!comment_text || !id) {
+      return res.status(400).json({ error: 'Yorum metni eksik' });
+    }
+    
+    const { error } = await supabase
+      .from('comments')
+      .insert([{
+        recipe_id: id,
+        author_name: author_name || 'Misafir Şef',
+        comment_text: comment_text.trim()
+      }]);
+      
+    if (error) throw error;
+    
+    res.status(200).json({ success: true });
+  } catch(err) {
+    console.error("Comment POST error:", err.message);
+    res.status(500).json({ error: 'Yorum eklenemedi' });
+  }
+});
+
+// Yorumları Getirme (GET)
+app.get('/api/recipe/:id/comments', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const { data, error } = await supabase
+      .from('comments')
+      .select('*')
+      .eq('recipe_id', id)
+      .order('created_at', { ascending: false });
+      
+    if (error) throw error;
+    
+    res.status(200).json(data);
+  } catch(err) {
+    console.error("Comments GET error:", err.message);
+    res.status(500).json({ error: 'Yorumlar getirilemedi' });
+  }
+});
+
 app.post('/api/generateRecipe', recipeLimiter, async (req, res) => {
   const { ingredients, language = 'tr', persona = 'standart' } = req.body;
   if (!ingredients) {
